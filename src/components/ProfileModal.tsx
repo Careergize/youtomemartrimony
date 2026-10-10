@@ -1,0 +1,582 @@
+import React, { useState } from 'react';
+import { 
+  X, 
+  Heart, 
+  Bookmark, 
+  ShieldCheck, 
+  MapPin, 
+  Briefcase, 
+  GraduationCap, 
+  CheckCircle2, 
+  Check, 
+  Lock, 
+  Eye, 
+  MessageSquare, 
+  Home, 
+  Compass 
+} from 'lucide-react';
+import type { MatrimonialProfile } from '../data/mockProfiles';
+
+interface ProfileModalProps {
+  profile: MatrimonialProfile | null;
+  currentUser: MatrimonialProfile;
+  isOpen: boolean;
+  onClose: () => void;
+  onToggleShortlist: (id: string) => void;
+  onSendInterest: (id: string) => void;
+  onOpenChat: (profile: MatrimonialProfile) => void;
+}
+
+export const ProfileModal: React.FC<ProfileModalProps> = ({
+  profile,
+  currentUser,
+  isOpen,
+  onClose,
+  onToggleShortlist,
+  onSendInterest,
+  onOpenChat
+}) => {
+  const [activeTab, setActiveTab] = useState<'about' | 'career' | 'family' | 'preferences'>('about');
+  const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(0);
+  const [isPhotoBlurred, setIsPhotoBlurred] = useState(false);
+  const [hasRequestedPhotos, setHasRequestedPhotos] = useState(false);
+
+  if (!isOpen || !profile) return null;
+
+  const isShortlisted = !!profile.isShortlisted;
+  const isInterestSent = profile.interestStatus === 'sent' || profile.interestStatus === 'accepted';
+  const isMutualMatch = profile.interestStatus === 'accepted';
+
+  // Compare partner preferences with current user
+  const preferencesComparison = [
+    {
+      title: 'Age Requirement',
+      preference: `${profile.partnerPreferences.ageRange[0]} - ${profile.partnerPreferences.ageRange[1]} years`,
+      yourValue: `${currentUser.age} years`,
+      isMatch: currentUser.age >= profile.partnerPreferences.ageRange[0] && currentUser.age <= profile.partnerPreferences.ageRange[1]
+    },
+    {
+      title: 'Height Requirement',
+      preference: `${Math.floor(profile.partnerPreferences.heightRange[0] / 12)}'${profile.partnerPreferences.heightRange[0] % 12}" - ${Math.floor(profile.partnerPreferences.heightRange[1] / 12)}'${profile.partnerPreferences.heightRange[1] % 12}"`,
+      yourValue: currentUser.height,
+      isMatch: currentUser.heightInches >= profile.partnerPreferences.heightRange[0] && currentUser.heightInches <= profile.partnerPreferences.heightRange[1]
+    },
+    {
+      title: 'Religion & Faith',
+      preference: profile.partnerPreferences.religion.join(', '),
+      yourValue: `${currentUser.religion} (${currentUser.community})`,
+      isMatch: profile.partnerPreferences.religion.includes(currentUser.religion)
+    },
+    {
+      title: 'Mother Tongue',
+      preference: profile.partnerPreferences.motherTongue.join(', '),
+      yourValue: currentUser.motherTongue,
+      isMatch: profile.partnerPreferences.motherTongue.includes(currentUser.motherTongue)
+    },
+    {
+      title: 'Education & Career Sector',
+      preference: profile.partnerPreferences.occupationSectors.slice(0, 3).join(', '),
+      yourValue: `${currentUser.education.degree}, ${currentUser.occupation.companySector}`,
+      isMatch: profile.partnerPreferences.occupationSectors.includes(currentUser.occupation.companySector)
+    },
+    {
+      title: 'Dietary Alignment',
+      preference: profile.partnerPreferences.diet.join(', '),
+      yourValue: currentUser.diet,
+      isMatch: profile.partnerPreferences.diet.includes(currentUser.diet)
+    }
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex justify-center items-center p-2 sm:p-4 md:p-6 animate-fadeIn">
+      <div 
+        className="relative bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-emerald-100 overflow-hidden max-h-[92vh] flex flex-col text-slate-800 animate-slideUp"
+        onClick={(e) => e.stopPropagation()}
+      >
+        
+        {/* Top Header Bar */}
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-[#F8FAF8] sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#059669] flex items-center justify-center font-bold">
+              <ShieldCheck className="w-5 h-5 text-[#059669]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#064E3B]">
+                  {profile.name}
+                </h2>
+                <span className="text-sm font-semibold text-slate-500">
+                  ({profile.age} yrs, {profile.height})
+                </span>
+                {profile.verification.isVerified && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                    Verified
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                <span>Profile ID: {profile.id.toUpperCase()}</span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-emerald-600" />
+                  {profile.city}, {profile.state}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Modal Scrollable Body */}
+        <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+          
+          {/* Top Hero Section: Photo Gallery & Quick Verification Checklist */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+            
+            {/* Gallery Column (5 cols) */}
+            <div className="md:col-span-5 space-y-3">
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 shadow-md">
+                <img
+                  src={profile.photos[selectedPhotoIdx]}
+                  alt={profile.name}
+                  className={`w-full h-full object-cover object-top transition-all duration-300 ${
+                    isPhotoBlurred ? 'blur-xl scale-110' : ''
+                  }`}
+                />
+
+                {isPhotoBlurred && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-md p-4 text-center text-white">
+                    <Lock className="w-8 h-8 text-amber-300 mb-2" />
+                    <p className="text-xs font-semibold">Photo Privacy Enabled</p>
+                    <p className="text-[11px] text-slate-200 mb-3">Visible upon mutual interest confirmation</p>
+                    <button
+                      type="button"
+                      onClick={() => setHasRequestedPhotos(true)}
+                      className="px-3.5 py-1.5 rounded-full bg-[#059669] text-xs font-bold text-white shadow-xs cursor-pointer"
+                    >
+                      {hasRequestedPhotos ? 'Request Pending' : 'Request Photo Access'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Compatibility Badge Overlay */}
+                <div className="absolute top-3 left-3 bg-[#059669] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1">
+                  <span>{profile.compatibilityScore}% Compatibility</span>
+                </div>
+
+                {/* Photo Blur Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsPhotoBlurred(!isPhotoBlurred)}
+                  className="absolute bottom-3 right-3 bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 transition-colors"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{isPhotoBlurred ? 'Reveal' : 'Privacy Blur'}</span>
+                </button>
+              </div>
+
+              {/* Thumbnails */}
+              {profile.photos.length > 1 && (
+                <div className="flex gap-2">
+                  {profile.photos.map((p, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedPhotoIdx(idx)}
+                      className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                        selectedPhotoIdx === idx ? 'border-[#059669] ring-2 ring-emerald-200 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={p} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Verification Checklist & Summary Stats (7 cols) */}
+            <div className="md:col-span-7 space-y-5">
+              
+              {/* Trust & Verification Badges */}
+              <div className="p-4 bg-emerald-50/70 border border-emerald-200/90 rounded-2xl">
+                <div className="flex items-center gap-2 text-emerald-900 font-bold text-xs uppercase tracking-wider mb-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>Trust & Credential Audit</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                  <div className="bg-white p-2.5 rounded-xl border border-emerald-100 shadow-xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
+                    <span className="font-semibold text-slate-800 block">Govt ID</span>
+                    <span className="text-[10px] text-emerald-700">100% Verified</span>
+                  </div>
+                  <div className="bg-white p-2.5 rounded-xl border border-emerald-100 shadow-xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
+                    <span className="font-semibold text-slate-800 block">Mobile OTP</span>
+                    <span className="text-[10px] text-emerald-700">Phone Verified</span>
+                  </div>
+                  <div className="bg-white p-2.5 rounded-xl border border-emerald-100 shadow-xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
+                    <span className="font-semibold text-slate-800 block">Work / Degree</span>
+                    <span className="text-[10px] text-emerald-700">Official Email</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Core Attributes Card */}
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                  <span className="text-slate-400 block font-medium">Profession</span>
+                  <span className="font-bold text-slate-900 text-sm">{profile.occupation.title}</span>
+                  <span className="text-slate-500 block truncate">{profile.occupation.employer}</span>
+                </div>
+
+                <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                  <span className="text-slate-400 block font-medium">Annual Income</span>
+                  <span className="font-bold text-[#059669] text-sm">{profile.occupation.annualIncome}</span>
+                  <span className="text-slate-500 block">Tier {profile.occupation.incomeBracket}</span>
+                </div>
+
+                <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                  <span className="text-slate-400 block font-medium">Education</span>
+                  <span className="font-bold text-slate-900 text-sm truncate">{profile.education.degree}</span>
+                  <span className="text-slate-500 block truncate">{profile.education.college}</span>
+                </div>
+
+                <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                  <span className="text-slate-400 block font-medium">Community & Caste</span>
+                  <span className="font-bold text-slate-900 text-sm">{profile.religion}</span>
+                  <span className="text-slate-500 block">{profile.community} {profile.subCaste ? `(${profile.subCaste})` : ''}</span>
+                </div>
+              </div>
+
+              {/* Horoscope High-Level Badge */}
+              <div className="p-3.5 bg-amber-50/70 border border-amber-200/80 rounded-2xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-200/70 text-amber-800 flex items-center justify-center font-bold">
+                    <Compass className="w-4 h-4 text-[#D97706]" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">
+                      Kundali / Horoscope Compatibility
+                    </span>
+                    <span className="text-xs text-slate-600">
+                      Nakshatra: {profile.horoscope.nakshatra} • Rasi: {profile.horoscope.rasi}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-sm font-extrabold text-[#D97706] block">
+                    {profile.horoscope.horoscopeMatchScore || 32} / 36 Gunas
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                    Auspicious Match
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Navigation Tabs */}
+          <div className="border-b border-slate-200 pt-2">
+            <nav className="flex space-x-2 sm:space-x-4 overflow-x-auto">
+              {[
+                { id: 'about', label: 'About & Lifestyle' },
+                { id: 'career', label: 'Career & Education' },
+                { id: 'family', label: 'Family & Horoscope' },
+                { id: 'preferences', label: 'Partner Preferences Match' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`pb-3 px-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+                    activeTab === tab.id
+                      ? 'border-[#059669] text-[#059669]'
+                      : 'border-transparent text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          {/* Tab Content Areas */}
+          <div className="py-2">
+            
+            {/* Tab 1: About & Lifestyle */}
+            {activeTab === 'about' && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="space-y-2 text-left">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Personal Narrative</h4>
+                  <p className="text-sm leading-relaxed text-slate-700 bg-[#F8FAF8] p-4 rounded-2xl border border-slate-200">
+                    {profile.bio}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Hobbies */}
+                  <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-2 text-left">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Passions &amp; Interests</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {profile.hobbies.map((h, i) => (
+                        <span key={i} className="text-xs font-medium px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          {h}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Core Values */}
+                  <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-2 text-left">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Life Principles & Values</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {profile.values.map((v, i) => (
+                        <span key={i} className="text-xs font-medium px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                          {v}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Habits */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+                  <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                    <span className="text-[11px] text-slate-400 block font-medium">Diet Habit</span>
+                    <span className="text-xs font-bold text-slate-800">{profile.diet}</span>
+                  </div>
+                  <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                    <span className="text-[11px] text-slate-400 block font-medium">Drinking</span>
+                    <span className="text-xs font-bold text-slate-800">{profile.drink}</span>
+                  </div>
+                  <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                    <span className="text-[11px] text-slate-400 block font-medium">Smoking</span>
+                    <span className="text-xs font-bold text-slate-800">{profile.smoke}</span>
+                  </div>
+                  <div className="bg-[#FAF9F6] p-3 rounded-xl border border-slate-200">
+                    <span className="text-[11px] text-slate-400 block font-medium">Languages</span>
+                    <span className="text-xs font-bold text-slate-800 truncate block">
+                      {profile.languagesSpoken.join(', ')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Career & Education */}
+            {activeTab === 'career' && (
+              <div className="space-y-4 animate-fadeIn text-left">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
+                    <div className="flex items-center gap-2 text-emerald-900 font-bold text-xs uppercase tracking-wider">
+                      <GraduationCap className="w-4 h-4 text-[#059669]" />
+                      <span>Education Background</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900">{profile.education.degree}</p>
+                      <p className="text-xs text-slate-600 mt-0.5">{profile.education.college}</p>
+                      <span className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700">
+                        Specialization: {profile.education.field}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
+                    <div className="flex items-center gap-2 text-[#059669] font-bold text-xs uppercase tracking-wider">
+                      <Briefcase className="w-4 h-4 text-[#059669]" />
+                      <span>Career & Employment</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900">{profile.occupation.title}</p>
+                      <p className="text-xs text-slate-600 mt-0.5">{profile.occupation.employer}</p>
+                      <p className="text-xs text-[#059669] font-semibold mt-1">
+                        Compensation: {profile.occupation.annualIncome} (Gross)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 3: Family & Horoscope */}
+            {activeTab === 'family' && (
+              <div className="space-y-6 animate-fadeIn text-left">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Family Background */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
+                    <div className="flex items-center gap-2 text-slate-800 font-bold text-xs uppercase tracking-wider">
+                      <Home className="w-4 h-4 text-[#D97706]" />
+                      <span>Family Details</span>
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      <div>
+                        <span className="text-slate-400 block font-medium">Family Structure</span>
+                        <span className="font-semibold text-slate-800">{profile.family.type} Family • {profile.family.values}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Father</span>
+                        <span className="font-semibold text-slate-800">{profile.family.fatherOccupation}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Mother</span>
+                        <span className="font-semibold text-slate-800">{profile.family.motherOccupation}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Siblings</span>
+                        <span className="font-semibold text-slate-800">{profile.family.siblings}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Native Ancestry</span>
+                        <span className="font-semibold text-slate-800">{profile.family.nativePlace}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Kundali & Astrological Data */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
+                    <div className="flex items-center gap-2 text-[#D97706] font-bold text-xs uppercase tracking-wider">
+                      <Compass className="w-4 h-4 text-[#D97706]" />
+                      <span>Astro & Kundali Attributes</span>
+                    </div>
+                    <div className="space-y-2 text-xs">
+                      <div>
+                        <span className="text-slate-400 block font-medium">Nakshatra (Birth Star)</span>
+                        <span className="font-semibold text-slate-800">{profile.horoscope.nakshatra}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Rasi (Moon Sign)</span>
+                        <span className="font-semibold text-slate-800">{profile.horoscope.rasi}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Manglik Status</span>
+                        <span className="font-semibold text-slate-800">{profile.horoscope.manglik}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Birth Details</span>
+                        <span className="font-semibold text-slate-800">{profile.horoscope.birthTime} ({profile.horoscope.birthPlace})</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 4: Partner Preferences Match */}
+            {activeTab === 'preferences' && (
+              <div className="space-y-4 animate-fadeIn text-left">
+                <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl text-xs text-emerald-900 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#059669] shrink-0" />
+                  <span>
+                    Comparing {profile.name.split(' ')[0]}'s desired partner criteria against your verified biodata:
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {preferencesComparison.map((item, idx) => (
+                    <div key={idx} className="p-3.5 bg-white rounded-2xl border border-slate-200 flex items-center justify-between gap-4">
+                      <div className="space-y-0.5">
+                        <span className="text-xs font-bold text-slate-900 block">{item.title}</span>
+                        <span className="text-[11px] text-slate-500">
+                          Looking for: <strong className="text-slate-700">{item.preference}</strong>
+                        </span>
+                        <span className="text-[11px] text-slate-500 block">
+                          Your profile: <span className="text-slate-700 font-medium">{item.yourValue}</span>
+                        </span>
+                      </div>
+
+                      <div className="shrink-0">
+                        {item.isMatch ? (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 text-[#059669] text-xs font-bold">
+                            <Check className="w-3.5 h-3.5 text-[#059669]" />
+                            Match
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+                            Flexible
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+        {/* Floating Modal Footer Bar */}
+        <div className="p-4 sm:p-5 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 sticky bottom-0 z-20">
+          
+          <div className="flex items-center gap-2">
+            {/* Shortlist Toggle */}
+            <button
+              type="button"
+              onClick={() => onToggleShortlist(profile.id)}
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl border text-xs font-bold transition-all ${
+                isShortlisted
+                  ? 'bg-amber-50 border-amber-300 text-amber-800'
+                  : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <Bookmark className={`w-4 h-4 ${isShortlisted ? 'fill-amber-500 text-amber-500' : ''}`} />
+              <span>{isShortlisted ? 'Shortlisted' : 'Shortlist Profile'}</span>
+            </button>
+
+            {/* Direct Message if mutual or interest accepted */}
+            {isMutualMatch && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenChat(profile);
+                }}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-bold shadow-xs transition-colors"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Start Direct Chat</span>
+              </button>
+            )}
+          </div>
+
+          {/* Express Interest Primary CTA */}
+          <button
+            type="button"
+            onClick={() => onSendInterest(profile.id)}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer ${
+              isInterestSent
+                ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
+                : 'bg-[#059669] hover:bg-[#047857] text-white shadow-emerald-900/15'
+            }`}
+          >
+            {isInterestSent ? (
+              <>
+                <Check className="w-4 h-4 text-emerald-700" />
+                <span>Interest Sent & Delivered</span>
+              </>
+            ) : (
+              <>
+                <Heart className="w-4 h-4 text-white fill-white/20" />
+                <span>Express Interest</span>
+              </>
+            )}
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+  );
+};

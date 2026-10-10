@@ -17,7 +17,7 @@ interface OnboardingWizardProps {
   isOpen: boolean;
   onClose: () => void;
   currentUser: MatrimonialProfile;
-  onSaveProfile: (updated: MatrimonialProfile) => void;
+  onSaveProfile: (updated: MatrimonialProfile) => Promise<void>;
 }
 
 export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
@@ -28,6 +28,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 }) => {
   const [step, setStep] = useState(1);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -59,12 +61,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     rasi: currentUser.horoscope.rasi,
     // Step 4
     bio: currentUser.bio,
-    photoUrl: currentUser.photos[0]
+    photoUrl: currentUser.photos[0] || ''
   });
 
   if (!isOpen) return null;
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (saving) return;
     if (step < 4) {
       setStep(step + 1);
     } else {
@@ -107,15 +110,16 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
           nakshatra: formData.nakshatra,
           rasi: formData.rasi
         },
-        photos: [formData.photoUrl, ...currentUser.photos.slice(1)]
+        photos: [formData.photoUrl, ...currentUser.photos.slice(1)].filter(Boolean)
       };
 
-      setIsSuccess(true);
-      setTimeout(() => {
-        onSaveProfile(updatedUser);
-        setIsSuccess(false);
+      setSaving(true); setError('');
+      try {
+        await onSaveProfile(updatedUser);
+        setIsSuccess(true);
         onClose();
-      }, 1200);
+      } catch (err) { setError(err instanceof Error ? err.message : 'Unable to save profile.'); }
+      finally { setSaving(false); }
     }
   };
 
@@ -137,6 +141,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         
+        {error && <p role="alert" className="p-3 text-sm text-red-700">{error}</p>}
+        {saving && <p role="status" className="p-3 text-sm">Saving profile...</p>}
         {/* Top Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-50/70 via-white to-teal-50/50">
           <div className="flex items-center gap-3">

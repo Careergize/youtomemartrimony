@@ -1,24 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { Heart, UserRound, LogOut } from 'lucide-react';
 
 interface NavbarProps {
+  isLoggedIn: boolean;
+  userName?: string;
+  onSignOut: () => void;
   activeTab: 'discovery' | 'interests' | 'shortlist' | 'messages';
   setActiveTab: (tab: 'discovery' | 'interests' | 'shortlist' | 'messages') => void;
   shortlistedCount: number;
   interestsCount: number;
   onOpenUpgrade: () => void;
-  onOpenWizard: () => void;
+  onOpenProfile: () => void;
   onScrollToSearch: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
+  isLoggedIn,
+  userName,
+  onSignOut,
   activeTab,
   setActiveTab,
   shortlistedCount,
   interestsCount,
   onOpenUpgrade,
-  onOpenWizard,
+  onOpenProfile,
   onScrollToSearch
 }) => {
   return (
@@ -120,6 +126,24 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Elements */}
           <div className="flex items-center gap-3">
+            {isLoggedIn ? (
+              <div className="flex items-center rounded-2xl border border-slate-200 bg-white px-1.5 py-1 shadow-sm">
+                <button type="button" onClick={onOpenProfile} title="View your profile" className="group flex min-w-16 max-w-28 sm:max-w-36 flex-col items-center gap-1 rounded-xl px-3 py-1 text-[11px] font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-100 group-hover:bg-emerald-100 transition-colors">
+                    <UserRound className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                  </span>
+                  <span className="w-full truncate">{userName || 'Your account'}</span>
+                </button>
+                <span className="mx-1 h-8 w-px bg-slate-200" aria-hidden="true" />
+                <button type="button" onClick={onSignOut} title="Sign out" className="group flex flex-col items-center gap-1 rounded-xl px-3 py-1 text-[11px] font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 cursor-pointer whitespace-nowrap">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 group-hover:bg-slate-100 transition-colors">
+                    <LogOut className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span>Sign out</span>
+                </button>
+              </div>
+            ) : (
+              <>
             
             {/* Login Pill Button */}
             <Link
@@ -130,13 +154,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             </Link>
 
             {/* Register Free Pill Button */}
-            <button
-              type="button"
-              onClick={onOpenWizard}
+            <Link
+              to="/register"
               className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#065F46] text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-emerald-900/15 hover:shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
               Register Free
-            </button>
+            </Link>
+              </>
+            )}
 
           </div>
 

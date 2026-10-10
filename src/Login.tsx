@@ -1,23 +1,30 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Lock, Mail, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { authenticate } from './api';
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError('');
+    try {
+      await authenticate('login', { email, password });
       navigate('/');
-    }, 600);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to sign in.');
+    } finally { setLoading(false); }
   };
 
   return (
+    <>
+    {error && <p role="alert" className="p-4 text-center text-red-700">{error}</p>}
     <div className="min-h-screen bg-[#F8FAF8] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       
       {/* Back to Discovery Link */}
@@ -150,5 +157,6 @@ export default function Login() {
 
       </div>
     </div>
+    </>
   );
 }

@@ -1,5 +1,5 @@
-import { useState, useMemo, useRef } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { 
   CheckCircle2, 
   RotateCcw, 
@@ -7,7 +7,6 @@ import {
   ArrowUpDown,
   SlidersHorizontal
 } from 'lucide-react';
-import { MOCK_PROFILES, CURRENT_USER } from './data/mockProfiles';
 import type { MatrimonialProfile } from './data/mockProfiles';
 import { Navbar } from './components/Navbar';
 import { HeroBanner } from './components/HeroBanner';
@@ -19,24 +18,42 @@ import { CommunityShowcase } from './components/CommunityShowcase';
 import { ProfileCard } from './components/ProfileCard';
 import { ProfileModal } from './components/ProfileModal';
 import { InterestsHub } from './components/InterestsHub';
-import { OnboardingWizard } from './components/OnboardingWizard';
+import ProfilePage from './ProfilePage';
 import { ChatModal } from './components/ChatModal';
 import { PremiumModal } from './components/PremiumModal';
 import { SuccessStories } from './components/SuccessStories';
 import { Footer } from './components/Footer';
 import Login from './Login';
+import { api, hasSession, loadProfiles, connectionFor } from './api';
 import Register from './Register';
 
 function Home() {
-  const [currentUser, setCurrentUser] = useState<MatrimonialProfile>(CURRENT_USER);
-  const [profiles, setProfiles] = useState<MatrimonialProfile[]>(MOCK_PROFILES);
+  const navigate = useNavigate();
+  const [apiError, setApiError] = useState('');
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  const refreshProfiles = async () => setProfiles(await loadProfiles());
+  useEffect(() => {
+    if (!hasSession()) { setLoadingProfiles(false); return; }
+    let active = true;
+    Promise.all([api<MatrimonialProfile>('me/'), loadProfiles()])
+      .then(([me, list]) => { if (active) { setCurrentUser(me); setProfiles(list); } })
+      .catch(err => { if (active) setApiError(err.message); })
+      .finally(() => { if (active) setLoadingProfiles(false); });
+    return () => { active = false; };
+  }, []);
+  const requireSession = () => {
+    if (!hasSession()) { navigate('/login'); return false; }
+    return true;
+  };
+
+  const [currentUser, setCurrentUser] = useState<MatrimonialProfile | null>(null);
+  const [profiles, setProfiles] = useState<MatrimonialProfile[]>([]);
   const [activeNavTab, setActiveNavTab] = useState<'discovery' | 'interests' | 'shortlist' | 'messages'>('discovery');
   
   // Modals state
   const [selectedProfile, setSelectedProfile] = useState<MatrimonialProfile | null>(null);
   const [chatProfile, setChatProfile] = useState<MatrimonialProfile | null>(null);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
-  const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   // Discovery Filter State
   const initialFilters: FilterState = {
@@ -85,29 +102,22 @@ function Home() {
   };
 
   // Profile Action Handlers
-  const handleToggleShortlist = (id: string) => {
-    setProfiles((prev) =>
-      prev.map((p) => {
-        if (p.id === id) {
-          const nextState = !p.isShortlisted;
-          showToast(nextState ? `Saved ${p.name} to your Shortlist` : `Removed ${p.name} from Shortlist`);
-          return { ...p, isShortlisted: nextState };
-        }
-        return p;
-      })
-    );
+  const handleToggleShortlist = async (id: string) => {
+    if (!requireSession()) return;
+    const profile = profiles.find(p => p.id === id);
+    try {
+      await api(`profiles/${id}/shortlist/`, profile?.isShortlisted ? 'DELETE' : 'POST');
+      await refreshProfiles();
+      showToast(profile?.isShortlisted ? 'Removed from shortlist.' : 'Saved to shortlist.');
+    } catch (err) { showToast(err instanceof Error ? err.message : 'Unable to save.'); }
   };
-
-  const handleSendInterest = (id: string) => {
-    setProfiles((prev) =>
-      prev.map((p) => {
-        if (p.id === id) {
-          showToast(`Interest proposal sent to ${p.name}`);
-          return { ...p, interestStatus: 'sent' };
-        }
-        return p;
-      })
-    );
+  const handleSendInterest = async (id: string) => {
+    if (!requireSession()) return;
+    try {
+      await api(`profiles/${id}/interest/`, 'POST');
+      await refreshProfiles();
+      showToast('Interest saved.');
+    } catch (err) { showToast(err instanceof Error ? err.message : 'Unable to send interest.'); }
   };
 
   const handlePassProfile = (id: string) => {
@@ -123,29 +133,17 @@ function Home() {
     showToast('Restored all passed profiles to your feed.');
   };
 
-  const handleAcceptInterest = (id: string) => {
-    setProfiles((prev) =>
-      prev.map((p) => {
-        if (p.id === id) {
-          showToast(`Mutual connection established with ${p.name}! Direct messaging unlocked.`);
-          return { ...p, interestStatus: 'accepted' };
-        }
-        return p;
-      })
-    );
+  const respondInterest = async (id: string, status: 'accepted' | 'declined') => {
+    if (!requireSession()) return;
+    try {
+      const connection = await connectionFor(id);
+      await api(`interests/${connection.id}/`, 'PATCH', { status });
+      await refreshProfiles();
+      showToast(status === 'accepted' ? 'Connection accepted. Messaging unlocked.' : 'Interest declined.');
+    } catch (err) { showToast(err instanceof Error ? err.message : 'Unable to respond.'); }
   };
-
-  const handleDeclineInterest = (id: string) => {
-    setProfiles((prev) =>
-      prev.map((p) => {
-        if (p.id === id) {
-          showToast(`Declined interest from ${p.name}.`);
-          return { ...p, interestStatus: 'declined' };
-        }
-        return p;
-      })
-    );
-  };
+  const handleAcceptInterest = (id: string) => { void respondInterest(id, 'accepted'); };
+  const handleDeclineInterest = (id: string) => { void respondInterest(id, 'declined'); };
 
   const handleResetFilters = () => {
     setFilters(initialFilters);
@@ -230,14 +228,26 @@ function Home() {
         </div>
       )}
 
+      {apiError && <p role="alert" className="p-4 text-center text-red-700">{apiError} <button onClick={() => window.location.reload()} className="underline">Retry</button></p>}
+      {loadingProfiles && <p role="status" className="p-4 text-center">Loading profiles...</p>}
+      {!hasSession() && <p className="p-4 text-center">Sign in to discover profiles and connect. <button className="underline" onClick={() => navigate('/register')}>Create an account</button></p>}
       {/* Global Luxury Minimal Header */}
       <Navbar
+        isLoggedIn={hasSession()}
+        userName={currentUser?.name}
+        onSignOut={async () => {
+          try {
+            await api('auth/logout/', 'POST');
+            sessionStorage.removeItem('you2me-token');
+            window.location.assign('/login');
+          } catch (err) { showToast(err instanceof Error ? err.message : 'Unable to sign out.'); }
+        }}
         activeTab={activeNavTab}
         setActiveTab={setActiveNavTab}
         shortlistedCount={shortlistedCount}
         interestsCount={interestsCount}
         onOpenUpgrade={() => setIsUpgradeOpen(true)}
-        onOpenWizard={() => setIsWizardOpen(true)}
+        onOpenProfile={() => { if (requireSession()) navigate('/profile'); }}
         onScrollToSearch={handleScrollToSearch}
       />
 
@@ -506,7 +516,7 @@ function Home() {
       {/* Global Modals */}
 
       {/* 1. Detailed Profile View Modal */}
-      <ProfileModal
+      {currentUser && <ProfileModal
         profile={selectedProfile}
         currentUser={currentUser}
         isOpen={!!selectedProfile}
@@ -514,26 +524,16 @@ function Home() {
         onToggleShortlist={handleToggleShortlist}
         onSendInterest={handleSendInterest}
         onOpenChat={(p) => setChatProfile(p)}
-      />
+      />}
 
-      {/* 2. Onboarding / Profile Setup Wizard */}
-      <OnboardingWizard
-        isOpen={isWizardOpen}
-        onClose={() => setIsWizardOpen(false)}
-        currentUser={currentUser}
-        onSaveProfile={(updated) => {
-          setCurrentUser(updated);
-          showToast('Updated your personal biodata successfully.');
-        }}
-      />
 
       {/* 3. Direct Messaging Chat Modal */}
-      <ChatModal
+      {currentUser && <ChatModal
         profile={chatProfile}
         currentUser={currentUser}
         isOpen={!!chatProfile}
         onClose={() => setChatProfile(null)}
-      />
+      />}
 
       {/* 4. Premium Upgrade Modal */}
       <PremiumModal
@@ -554,6 +554,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   );

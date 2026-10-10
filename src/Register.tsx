@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ArrowLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { authenticate } from './api';
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
+    email: '',
+    password: '',
     lastName: '',
     gender: 'Bride',
     religion: 'Hindu',
@@ -13,13 +16,19 @@ export const Register: React.FC = () => {
     city: 'Kochi'
   });
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSuccess(true);
-    setTimeout(() => {
+    setError('');
+    setLoading(true);
+    try {
+      await authenticate('register', formData);
+      setIsSuccess(true);
       navigate('/');
-    }, 1500);
+    } catch (err) { setError(err instanceof Error ? err.message : 'Unable to register.'); }
+    finally { setLoading(false); }
   };
 
   return (
@@ -75,7 +84,23 @@ export const Register: React.FC = () => {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} onInvalidCapture={(event) => {
+              const field = event.target as HTMLInputElement;
+              setError(field.type === 'email'
+                ? 'Enter a valid email address, for example name@example.com.'
+                : field.type === 'password'
+                  ? 'Enter a password with at least 8 characters.'
+                  : field.validationMessage);
+            }} className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label className="text-xs font-bold text-slate-700">Email
+                  <input type="email" required autoComplete="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="mt-1 w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl" />
+                </label>
+                <label className="text-xs font-bold text-slate-700">Password
+                  <input type="password" required minLength={8} autoComplete="new-password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} className="mt-1 w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl" />
+                </label>
+              </div>
+              {loading && <p role="status" className="text-sm text-slate-600">Creating your account...</p>}
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -167,10 +192,12 @@ export const Register: React.FC = () => {
 
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full py-3.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-900/15 transition-all cursor-pointer"
               >
-                Create My Profile &amp; Explore Matches
+                {loading ? 'Creating your profile...' : 'Create My Profile & Explore Matches'}
               </button>
+              {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
 
             </form>
           )}

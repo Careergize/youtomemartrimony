@@ -101,6 +101,9 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        <p className="mt-6 text-center text-xs text-slate-400">
+          Powered by <span className="font-semibold text-emerald-400">Careergize</span>
+        </p>
       </div>
     </footer>
   );

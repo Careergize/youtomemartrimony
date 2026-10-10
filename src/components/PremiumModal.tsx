@@ -13,16 +13,12 @@ interface PremiumModalProps {
 
 export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) => {
   const [selectedPlan, setSelectedPlan] = useState<'gold' | 'elite'>('elite');
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [notice, setNotice] = useState('');
 
   if (!isOpen) return null;
 
   const handleSubscribe = () => {
-    setIsSubscribed(true);
-    setTimeout(() => {
-      setIsSubscribed(false);
-      onClose();
-    }, 1500);
+    setNotice('Online payment is not available yet. No subscription has been activated.');
   };
 
   return (
@@ -31,6 +27,7 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
         className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-amber-200 overflow-hidden flex flex-col text-slate-800 animate-slideUp"
         onClick={(e) => e.stopPropagation()}
       >
+        {notice && <p role="status" className="p-4 text-center text-sm">{notice}</p>}
         {/* Top Gold Banner */}
         {/* Modal Header */}
         <div className="p-6 sm:p-8 bg-gradient-to-br from-[#064E3B] via-[#047857] to-[#065F46] text-white relative overflow-hidden">
@@ -61,6 +58,10 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
 
         {/* Plan Select Cards */}
         <div className="p-6 sm:p-8 space-y-6">
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center">
+            <p className="text-lg font-bold text-[#064E3B]">First 2 months completely free</p>
+            <p className="mt-1 text-xs text-emerald-800">Start your journey free, then choose a 3-month or 6-month plan.</p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
             {/* Gold Plan */}
@@ -81,7 +82,8 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
                 </span>
               </div>
               <div className="mt-3">
-                <span className="text-2xl font-bold text-slate-900">₹4,999</span>
+                <del className="mr-2 text-sm text-slate-400">₹4,999</del>
+                <span className="text-2xl font-bold text-slate-900">₹500</span>
                 <span className="text-xs text-slate-500 ml-1">/ one-time</span>
               </div>
 
@@ -123,7 +125,8 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
                 </span>
               </div>
               <div className="mt-3">
-                <span className="text-2xl font-bold text-slate-900">₹8,499</span>
+                <del className="mr-2 text-sm text-slate-400">₹4,999</del>
+                <span className="text-2xl font-bold text-slate-900">₹2,000</span>
                 <span className="text-xs text-slate-500 ml-1">/ one-time</span>
               </div>
 
@@ -163,7 +166,7 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({ isOpen, onClose }) =
             onClick={handleSubscribe}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#065F46] text-white font-bold text-sm shadow-md shadow-emerald-900/15 hover:shadow-lg transition-all cursor-pointer"
           >
-            {isSubscribed ? 'Upgraded! Welcome to YOU2ME VIP' : `Activate ${selectedPlan === 'elite' ? 'Royale VIP' : 'Gold'} Plan`}
+            {`Activate ${selectedPlan === 'elite' ? 'Royale VIP' : 'Gold'} Plan`}
           </button>
         </div>
 

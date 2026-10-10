@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   Send, 
-  PhoneCall, 
   Lock,
   CheckCheck
 } from 'lucide-react';
 import type { MatrimonialProfile } from '../data/mockProfiles';
+
+import { api, connectionFor } from '../api';
 
 interface ChatModalProps {
   profile: MatrimonialProfile | null;
@@ -24,56 +25,46 @@ interface Message {
 
 export const ChatModal: React.FC<ChatModalProps> = ({
   profile,
-  currentUser,
   isOpen,
   onClose
 }) => {
-  if (!isOpen || !profile) return null;
-
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'm1',
-      sender: 'them',
-      text: `Hello ${currentUser.name.split(' ')[0]}! It's wonderful to connect with you. Our families and partner preferences appear to share many values.`,
-      time: '11:15 AM'
-    },
-    {
-      id: 'm2',
-      sender: 'them',
-      text: 'I read your bio and appreciated your balance of career aspirations with cultural grounding. Would love to know more about your weekend passions!',
-      time: '11:16 AM'
-    }
-  ]);
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputVal, setInputVal] = useState('');
-  const [contactShared, setContactShared] = useState(false);
-
-  const handleSend = (textToSend?: string) => {
-    const text = textToSend || inputVal;
-    if (!text.trim()) return;
-
-    const newMsg: Message = {
-      id: String(Date.now()),
-      sender: 'me',
-      text: text.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setMessages((prev) => [...prev, newMsg]);
-    setInputVal('');
-
-    // Simulated reply after 1.5 seconds
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now() + 1),
-          sender: 'them',
-          text: `Thank you for sharing, ${currentUser.name.split(' ')[0]}! That aligns closely with how my family and I see things. Let me know if you would like our parents to coordinate a call as well.`,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const [connectionId, setConnectionId] = useState<number | null>(null);
+  const [error, setError] = useState('');
+  const [sending, setSending] = useState(false);
+  useEffect(() => {
+    if (!isOpen || !profile) return;
+    let active = true;
+    setMessages([]); setConnectionId(null); setError('');
+    const load = async () => {
+      try {
+        const connection = await connectionFor(profile.id);
+        if (connection.status !== 'accepted') throw new Error('Messaging unlocks after your interest is accepted.');
+        let path: string | null = `interests/${connection.id}/messages/`;
+        const history: Message[] = [];
+        while (path) {
+          const page: { results: Message[]; next: string | null } = await api(path);
+          history.push(...page.results);
+          path = page.next ? `interests/${connection.id}/messages/${new URL(page.next).search}` : null;
         }
-      ]);
-    }, 1500);
+        if (active) { setConnectionId(connection.id); setMessages(history); }
+      } catch (err) { if (active) setError(err instanceof Error ? err.message : 'Unable to load messages.'); }
+    };
+    void load();
+    const timer = window.setInterval(() => { void load(); }, 5000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [isOpen, profile?.id]);
+  if (!isOpen || !profile) return null;
+  const handleSend = async (textToSend?: string) => {
+    const text = (textToSend || inputVal).trim();
+    if (!text || !connectionId || sending) return;
+    setSending(true); setError('');
+    try {
+      const message = await api<Message>(`interests/${connectionId}/messages/`, 'POST', { text });
+      setMessages(prev => [...prev, message]); setInputVal('');
+    } catch (err) { setError(err instanceof Error ? err.message : 'Unable to send message.'); }
+    finally { setSending(false); }
   };
 
   const icebreakers = [
@@ -88,6 +79,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
         className="relative bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-emerald-100 overflow-hidden flex flex-col h-[650px] max-h-[90vh] text-slate-800 animate-slideUp"
         onClick={(e) => e.stopPropagation()}
       >
+        {error && <p role="alert" className="p-3 text-red-700 text-sm">{error}</p>}
         {/* Top Chat Header */}
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-50/70 via-white to-teal-50/50">
           <div className="flex items-center gap-3">
@@ -128,17 +120,9 @@ export const ChatModal: React.FC<ChatModalProps> = ({
         <div className="px-4 py-2 bg-emerald-50/70 border-b border-emerald-100 text-[11px] text-emerald-900 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Lock className="w-3.5 h-3.5 text-emerald-600" />
-            <span>End-to-End Encrypted Matrimonial Channel</span>
+            <span>Private conversation for accepted connections</span>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setContactShared(true)}
-            className="font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1 text-[11px] cursor-pointer"
-          >
-            <PhoneCall className="w-3 h-3" />
-            <span>{contactShared ? 'Contact Details Shared' : 'Share Family Contact'}</span>
-          </button>
         </div>
 
         {/* Chat Messages Body */}
@@ -163,7 +147,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                       isMe ? 'text-emerald-100' : 'text-slate-400'
                     }`}
                   >
-                    <span>{m.time}</span>
+                    <span>{new Date(m.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     {isMe && <CheckCheck className="w-3 h-3 text-emerald-200" />}
                   </div>
                 </div>
@@ -204,7 +188,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
           <button
             type="button"
             onClick={() => handleSend()}
-            disabled={!inputVal.trim()}
+            disabled={!inputVal.trim() || !connectionId || sending}
             className="w-10 h-10 rounded-2xl bg-[#059669] hover:bg-[#047857] disabled:opacity-40 text-white flex items-center justify-center transition-all shadow-md shadow-emerald-900/15 cursor-pointer"
           >
             <Send className="w-4 h-4" />

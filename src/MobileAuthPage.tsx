@@ -3,5 +3,5 @@ import MobileAuth from './components/MobileAuth';
 
 export default function MobileAuthPage({ registration = false }: { registration?: boolean }) {
   const navigate = useNavigate();
-  return <div className="min-h-screen bg-[#F8FAF8]"><MobileAuth registration={registration} onClose={() => { sessionStorage.setItem('you2me-auth-dismissed', 'true'); navigate('/'); }} /></div>;
+  return <div className="min-h-screen bg-[#FAFAFA]"><MobileAuth registration={registration} onClose={() => { sessionStorage.setItem('you2me-auth-dismissed', 'true'); navigate('/'); }} /></div>;
 }

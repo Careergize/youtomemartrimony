@@ -30,16 +30,16 @@ export const SuccessStories: React.FC = () => {
   ];
 
   return (
-    <section id="stories" className="py-16 sm:py-20 bg-[#F8FAF8] border-t border-emerald-100/60">
+    <section id="stories" className="py-16 sm:py-20 bg-[#FAFAFA] border-t border-red-100/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-12">
         
         {/* Section Header */}
         <div className="max-w-2xl mx-auto space-y-2.5">
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#064E3B] tracking-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#18181B] tracking-tight">
             Happy Couples, Beautiful Beginnings
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+          <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
             Thousands of couples have found their life partners through YOU2ME's genuine, safe, and family-first platform.
           </p>
         </div>
@@ -49,9 +49,9 @@ export const SuccessStories: React.FC = () => {
           {stories.map((story, idx) => (
             <article
               key={idx}
-              className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl hover:border-emerald-300 transition-all duration-300 flex flex-col text-left group"
+              className="bg-white rounded-3xl overflow-hidden border border-zinc-200/80 shadow-xs hover:shadow-xl hover:border-red-300 transition-all duration-300 flex flex-col text-left group"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-900">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-900">
                 <img
                   src={story.photo}
                   alt={story.names}
@@ -63,14 +63,14 @@ export const SuccessStories: React.FC = () => {
                   <h3 className="font-serif text-xl font-bold tracking-tight">
                     {story.names}
                   </h3>
-                  <div className="flex items-center gap-2 text-xs text-slate-300 mt-0.5">
+                  <div className="flex items-center gap-2 text-xs text-zinc-300 mt-0.5">
                     <span className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-emerald-400" />
+                      <MapPin className="w-3 h-3 text-red-400" />
                       {story.location}
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-emerald-400" />
+                      <Calendar className="w-3 h-3 text-red-400" />
                       {story.date}
                     </span>
                   </div>
@@ -79,16 +79,16 @@ export const SuccessStories: React.FC = () => {
 
               <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                 <div className="relative">
-                  <Quote className="w-7 h-7 text-emerald-200 mb-1" />
-                  <p className="text-xs sm:text-sm text-slate-600 italic leading-relaxed">
+                  <Quote className="w-7 h-7 text-red-200 mb-1" />
+                  <p className="text-xs sm:text-sm text-zinc-600 italic leading-relaxed">
                     "{story.quote}"
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-800">{story.tag}</span>
-                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
+                  <span className="font-semibold text-zinc-800">{story.tag}</span>
+                  <span className="text-[11px] font-bold text-red-800 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-200 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-red-600" />
                     Verified Union
                   </span>
                 </div>

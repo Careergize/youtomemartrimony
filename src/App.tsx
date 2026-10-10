@@ -220,12 +220,12 @@ function Home() {
   const interestsCount = profiles.filter((p) => p.interestStatus === 'received').length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAF8] text-slate-800 selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen flex flex-col bg-[#FAFAFA] text-zinc-800 selection:bg-red-100 selection:text-red-900">
       
       {/* Toast Notification Pill */}
       {notificationToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#064E3B] text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm border border-emerald-700 animate-slideUp">
-          <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 bg-[#18181B] text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm border border-red-700 animate-slideUp">
+          <CheckCircle2 className="w-4 h-4 text-red-300 shrink-0" />
           <span>{notificationToast}</span>
         </div>
       )}
@@ -302,16 +302,16 @@ function Home() {
             <section ref={discoverySectionRef} id="discovery-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
               
               {/* Section Header with Sort Controls */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 mb-8 border-b border-emerald-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 mb-8 border-b border-red-100">
                 <div className="text-left">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#047857] text-xs font-bold uppercase tracking-wider mb-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-[#A6192D] text-xs font-bold uppercase tracking-wider mb-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600" />
                     <span>All Verified Matches</span>
                   </div>
-                  <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#064E3B] tracking-tight">
+                  <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#18181B] tracking-tight">
                     Explore Verified Profiles
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                  <p className="text-xs sm:text-sm text-zinc-500 mt-1">
                     Displaying verified singles matching your preferences with direct family contact options.
                   </p>
                 </div>
@@ -324,16 +324,16 @@ function Home() {
                     onClick={() => setIsFilterOpen((prev) => !prev)}
                     className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
                       isFilterOpen
-                        ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-                        : 'bg-white text-slate-700 border-slate-200 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50/50'
+                        ? 'bg-red-50 text-red-800 border-red-300 hover:bg-red-100'
+                        : 'bg-white text-zinc-700 border-zinc-200 hover:border-red-300 hover:text-red-700 hover:bg-red-50/50'
                     }`}
                     title={isFilterOpen ? 'Hide filter sidebar' : 'Show filter sidebar'}
                     aria-label={isFilterOpen ? 'Hide filter sidebar' : 'Show filter sidebar'}
                   >
-                    <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600" />
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-red-600" />
                     <span>{isFilterOpen ? 'Hide Filters' : 'Show Filters'}</span>
                     {activeFiltersCount > 0 && (
-                      <span className="w-5 h-5 rounded-full bg-[#059669] text-white text-[10px] font-bold flex items-center justify-center">
+                      <span className="w-5 h-5 rounded-full bg-[#C71F37] text-white text-[10px] font-bold flex items-center justify-center">
                         {activeFiltersCount}
                       </span>
                     )}
@@ -349,13 +349,13 @@ function Home() {
                     </button>
                   )}
 
-                  <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs">
-                    <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="text-xs text-slate-500 font-medium">Sort:</span>
+                  <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-zinc-200 shadow-xs">
+                    <ArrowUpDown className="w-3.5 h-3.5 text-zinc-400" />
+                    <span className="text-xs text-zinc-500 font-medium">Sort:</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as any)}
-                      className="text-xs font-bold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+                      className="text-xs font-bold text-zinc-800 bg-transparent focus:outline-none cursor-pointer"
                     >
                       <option value="compatibility">Highest Match %</option>
                       <option value="ageAsc">Age: Youngest First</option>
@@ -384,10 +384,10 @@ function Home() {
                 <div className="flex-1 w-full">
                   {/* Active filters pill bar when sidebar is hidden */}
                   {!isFilterOpen && activeFiltersCount > 0 && (
-                    <div className="mb-6 p-3 sm:p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div className="mb-6 p-3 sm:p-3.5 bg-red-50/70 border border-red-200/80 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-2">
-                        <SlidersHorizontal className="w-4 h-4 text-[#059669]" />
-                        <span className="font-semibold text-emerald-950">
+                        <SlidersHorizontal className="w-4 h-4 text-[#C71F37]" />
+                        <span className="font-semibold text-red-950">
                           {activeFiltersCount} filter{activeFiltersCount > 1 ? 's' : ''} applied ({filteredProfiles.length} matching)
                         </span>
                       </div>
@@ -395,15 +395,15 @@ function Home() {
                         <button
                           type="button"
                           onClick={() => setIsFilterOpen(true)}
-                          className="font-bold text-emerald-700 hover:text-emerald-900 underline underline-offset-2 cursor-pointer"
+                          className="font-bold text-red-700 hover:text-red-900 underline underline-offset-2 cursor-pointer"
                         >
                           Modify Filters
                         </button>
-                        <span className="text-slate-300">|</span>
+                        <span className="text-zinc-300">|</span>
                         <button
                           type="button"
                           onClick={handleResetFilters}
-                          className="font-medium text-slate-600 hover:text-slate-900 cursor-pointer"
+                          className="font-medium text-zinc-600 hover:text-zinc-900 cursor-pointer"
                         >
                           Reset
                         </button>
@@ -412,21 +412,21 @@ function Home() {
                   )}
 
                   {filteredProfiles.length === 0 ? (
-                    <div className="py-20 px-8 text-center bg-white rounded-3xl border border-emerald-100 shadow-sm space-y-4">
-                      <div className="w-16 h-16 rounded-full bg-emerald-50 text-[#059669] flex items-center justify-center mx-auto">
+                    <div className="py-20 px-8 text-center bg-white rounded-3xl border border-red-100 shadow-sm space-y-4">
+                      <div className="w-16 h-16 rounded-full bg-red-50 text-[#C71F37] flex items-center justify-center mx-auto">
                         <Search className="w-8 h-8" />
                       </div>
-                      <h3 className="font-serif text-2xl font-bold text-slate-800">
+                      <h3 className="font-serif text-2xl font-bold text-zinc-800">
                         No Matching Profiles Found
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                      <p className="text-xs sm:text-sm text-zinc-500 max-w-md mx-auto">
                         We couldn't find profiles matching all your specific criteria. Try broadening your age, height, or profession filters.
                       </p>
                       <div className="flex items-center justify-center gap-3">
                         <button
                           type="button"
                           onClick={handleResetFilters}
-                          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#059669] text-white text-xs font-bold shadow-md hover:bg-[#047857] transition-all cursor-pointer"
+                          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#C71F37] text-white text-xs font-bold shadow-md hover:bg-[#A6192D] transition-all cursor-pointer"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
                           <span>Clear All Filters</span>
@@ -435,9 +435,9 @@ function Home() {
                           <button
                             type="button"
                             onClick={() => setIsFilterOpen(true)}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-all cursor-pointer"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-zinc-200 text-zinc-700 text-xs font-bold hover:bg-zinc-50 transition-all cursor-pointer"
                           >
-                            <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600" />
+                            <SlidersHorizontal className="w-3.5 h-3.5 text-red-600" />
                             <span>Show Filters</span>
                           </button>
                         )}

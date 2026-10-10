@@ -32,32 +32,32 @@ export const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF8] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAFAFA] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       
       {/* Back Link */}
       <div className="max-w-3xl mx-auto w-full mb-6">
         <Link 
           to="/" 
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-[#059669] transition-colors p-2 rounded-lg hover:bg-emerald-50"
+          className="inline-flex items-center gap-2 text-xs font-bold text-zinc-600 hover:text-[#C71F37] transition-colors p-2 rounded-lg hover:bg-red-50"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Return to YOU2ME Matrimony Home</span>
         </Link>
       </div>
 
-      <div className="max-w-3xl mx-auto w-full bg-white rounded-3xl shadow-xl border border-emerald-100 overflow-hidden text-left">
+      <div className="max-w-3xl mx-auto w-full bg-white rounded-3xl shadow-xl border border-red-100 overflow-hidden text-left">
         
         {/* Banner */}
-        <div className="bg-gradient-to-r from-[#064E3B] via-[#047857] to-[#065F46] p-6 sm:p-8 text-white relative">
+        <div className="bg-gradient-to-r from-[#18181B] via-[#A6192D] to-[#861526] p-6 sm:p-8 text-white relative">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#059669] to-[#047857] flex items-center justify-center shadow-md">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#C71F37] to-[#A6192D] flex items-center justify-center shadow-md">
               <Heart className="w-5 h-5 text-white stroke-[2.5] fill-none" />
             </div>
             <div className="flex flex-col text-left leading-none">
               <span className="font-serif text-2xl font-bold tracking-tight text-white">
                 YOU2ME
               </span>
-              <span className="text-[10px] font-extrabold tracking-[0.22em] uppercase text-emerald-300 mt-1">
+              <span className="text-[10px] font-extrabold tracking-[0.22em] uppercase text-red-300 mt-1">
                 MATRIMONY
               </span>
             </div>
@@ -66,7 +66,7 @@ export const Register: React.FC = () => {
           <h1 className="font-serif text-2xl sm:text-3xl font-bold mt-4">
             Begin Your Story Today
           </h1>
-          <p className="text-xs sm:text-sm text-emerald-100 mt-1 max-w-xl">
+          <p className="text-xs sm:text-sm text-red-100 mt-1 max-w-xl">
             Join India's most trusted matrimonial community. Free confidential registration takes under 2 minutes.
           </p>
         </div>
@@ -75,11 +75,11 @@ export const Register: React.FC = () => {
         <div className="p-6 sm:p-8">
           {isSuccess ? (
             <div className="py-12 text-center space-y-3">
-              <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto animate-bounce" />
-              <h2 className="font-serif text-2xl font-bold text-slate-900">
+              <CheckCircle2 className="w-16 h-16 text-red-600 mx-auto animate-bounce" />
+              <h2 className="font-serif text-2xl font-bold text-zinc-900">
                 Welcome to YOU2ME Matrimony!
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+              <p className="text-xs sm:text-sm text-zinc-600 max-w-md mx-auto">
                 Your profile has been created. Directing you to your personalized match discovery feed...
               </p>
             </div>
@@ -93,48 +93,48 @@ export const Register: React.FC = () => {
                   : field.validationMessage);
             }} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <label className="text-xs font-bold text-slate-700">Email
-                  <input type="email" required autoComplete="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="mt-1 w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl" />
+                <label className="text-xs font-bold text-zinc-700">Email
+                  <input type="email" required autoComplete="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="mt-1 w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl" />
                 </label>
-                <label className="text-xs font-bold text-slate-700">Password
-                  <input type="password" required minLength={8} autoComplete="new-password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} className="mt-1 w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl" />
+                <label className="text-xs font-bold text-zinc-700">Password
+                  <input type="password" required minLength={8} autoComplete="new-password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} className="mt-1 w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl" />
                 </label>
               </div>
-              {loading && <p role="status" className="text-sm text-slate-600">Creating your account...</p>}
+              {loading && <p role="status" className="text-sm text-zinc-600">Creating your account...</p>}
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">First Name</label>
+                  <label className="text-xs font-bold text-zinc-700 block mb-1">First Name</label>
                   <input
                     type="text"
                     required
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     placeholder="Enter first name"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs sm:text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Last Name</label>
+                  <label className="text-xs font-bold text-zinc-700 block mb-1">Last Name</label>
                   <input
                     type="text"
                     required
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     placeholder="Enter last name"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs sm:text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Looking for a</label>
+                  <label className="text-xs font-bold text-zinc-700 block mb-1">Looking for a</label>
                   <select
                     value={formData.gender}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs sm:text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
                   >
                     <option value="Bride">Bride</option>
                     <option value="Groom">Groom</option>
@@ -142,11 +142,11 @@ export const Register: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Religion / Community</label>
+                  <label className="text-xs font-bold text-zinc-700 block mb-1">Religion / Community</label>
                   <select
                     value={formData.religion}
                     onChange={(e) => setFormData({ ...formData, religion: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs sm:text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
                   >
                     <option value="Hindu">Hindu</option>
                     <option value="Christian">Christian</option>
@@ -159,32 +159,32 @@ export const Register: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Age</label>
+                  <label className="text-xs font-bold text-zinc-700 block mb-1">Age</label>
                   <input
                     type="number"
                     min="18"
                     max="65"
                     value={formData.age}
                     onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs sm:text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">City / Region</label>
+                  <label className="text-xs font-bold text-zinc-700 block mb-1">City / Region</label>
                   <input
                     type="text"
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     placeholder="e.g. Kochi, Bengaluru..."
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs sm:text-sm text-zinc-800 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </div>
               </div>
 
-              <div className="p-3 bg-[#F8FAF8] border border-emerald-100 rounded-xl text-xs text-slate-600 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="p-3 bg-[#FAFAFA] border border-red-100 rounded-xl text-xs text-zinc-600 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-red-600 shrink-0" />
                 <span>
                   All submitted data is strictly protected under YOU2ME's Privacy Guarantee.
                 </span>
@@ -193,7 +193,7 @@ export const Register: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-900/15 transition-all cursor-pointer"
+                className="w-full py-3.5 rounded-xl bg-[#C71F37] hover:bg-[#A6192D] text-white text-xs sm:text-sm font-bold shadow-md shadow-red-900/15 transition-all cursor-pointer"
               >
                 {loading ? 'Creating your profile...' : 'Create My Profile & Explore Matches'}
               </button>
@@ -202,9 +202,9 @@ export const Register: React.FC = () => {
             </form>
           )}
 
-          <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-slate-500">Already registered on YOU2ME?</span>
-            <Link to="/login" className="font-bold text-[#059669] hover:underline">
+          <div className="mt-8 pt-6 border-t border-zinc-100 flex items-center justify-between text-xs">
+            <span className="text-zinc-500">Already registered on YOU2ME?</span>
+            <Link to="/login" className="font-bold text-[#C71F37] hover:underline">
               Log in to your account →
             </Link>
           </div>

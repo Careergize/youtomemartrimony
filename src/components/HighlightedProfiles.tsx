@@ -44,18 +44,18 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
   };
 
   return (
-    <section className="py-14 sm:py-16 bg-white relative border-b border-emerald-100/60">
+    <section className="py-14 sm:py-16 bg-white relative border-b border-red-100/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
         
         {/* Section Header */}
         <div className="space-y-2.5 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-red-50 border border-red-200 text-red-800 text-xs font-bold uppercase tracking-wider">
             <span>Verified Profiles</span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#064E3B] tracking-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#18181B] tracking-tight">
             Featured Brides &amp; Grooms
           </h2>
-          <p className="text-sm sm:text-base text-slate-600">
+          <p className="text-sm sm:text-base text-zinc-600">
             Handpicked genuine profiles looking for marriage with complete family verification.
           </p>
         </div>
@@ -67,8 +67,8 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
             onClick={() => handleCategoryChange('All')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
               categoryFilter === 'All'
-                ? 'bg-[#064E3B] text-white shadow-sm'
-                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
+                ? 'bg-[#18181B] text-white shadow-sm'
+                : 'bg-zinc-50 text-zinc-700 hover:bg-zinc-100 border border-zinc-200'
             }`}
           >
             All Profiles ({profiles.length})
@@ -78,8 +78,8 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
             onClick={() => handleCategoryChange('Bride')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
               categoryFilter === 'Bride'
-                ? 'bg-[#059669] text-white shadow-sm'
-                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
+                ? 'bg-[#C71F37] text-white shadow-sm'
+                : 'bg-zinc-50 text-zinc-700 hover:bg-zinc-100 border border-zinc-200'
             }`}
           >
             Brides
@@ -89,8 +89,8 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
             onClick={() => handleCategoryChange('Groom')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
               categoryFilter === 'Groom'
-                ? 'bg-[#059669] text-white shadow-sm'
-                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
+                ? 'bg-[#C71F37] text-white shadow-sm'
+                : 'bg-zinc-50 text-zinc-700 hover:bg-zinc-100 border border-zinc-200'
             }`}
           >
             Grooms
@@ -100,8 +100,8 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
             onClick={() => handleCategoryChange('TopMatch')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               categoryFilter === 'TopMatch'
-                ? 'bg-emerald-700 text-white shadow-sm'
-                : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
+                ? 'bg-red-700 text-white shadow-sm'
+                : 'bg-zinc-50 text-zinc-700 hover:bg-zinc-100 border border-zinc-200'
             }`}
           >
             <span>High Compatibility (95%+)</span>
@@ -115,7 +115,7 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
           <button
             type="button"
             onClick={handlePrev}
-            className="w-11 h-11 rounded-full bg-white hover:bg-emerald-50 border border-slate-200 shadow-md flex items-center justify-center text-slate-700 hover:text-emerald-700 transition-all absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
+            className="w-11 h-11 rounded-full bg-white hover:bg-red-50 border border-zinc-200 shadow-md flex items-center justify-center text-zinc-700 hover:text-red-700 transition-all absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             title="Previous Profiles"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -125,7 +125,7 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
           <button
             type="button"
             onClick={handleNext}
-            className="w-11 h-11 rounded-full bg-white hover:bg-emerald-50 border border-slate-200 shadow-md flex items-center justify-center text-slate-700 hover:text-emerald-700 transition-all absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
+            className="w-11 h-11 rounded-full bg-white hover:bg-red-50 border border-zinc-200 shadow-md flex items-center justify-center text-zinc-700 hover:text-red-700 transition-all absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             title="Next Profiles"
           >
             <ChevronRight className="w-5 h-5" />
@@ -153,7 +153,7 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
                   type="button"
                   onClick={() => setCurrentPage(i)}
                   className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                    currentPage === i ? 'bg-[#059669] w-7' : 'bg-slate-300 hover:bg-slate-400 w-2.5'
+                    currentPage === i ? 'bg-[#C71F37] w-7' : 'bg-zinc-300 hover:bg-zinc-400 w-2.5'
                   }`}
                 />
               ))}

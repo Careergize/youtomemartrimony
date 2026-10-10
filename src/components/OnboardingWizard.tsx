@@ -135,25 +135,25 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex justify-center items-center p-3 sm:p-6 animate-fadeIn">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-zinc-950/70 backdrop-blur-md flex justify-center items-center p-3 sm:p-6 animate-fadeIn">
       <div 
-        className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-emerald-100 overflow-hidden flex flex-col text-slate-800 animate-slideUp"
+        className="relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-red-100 overflow-hidden flex flex-col text-zinc-800 animate-slideUp"
         onClick={(e) => e.stopPropagation()}
       >
         
         {error && <p role="alert" className="p-3 text-sm text-red-700">{error}</p>}
         {saving && <p role="status" className="p-3 text-sm">Saving profile...</p>}
         {/* Top Header */}
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-emerald-50/70 via-white to-teal-50/50">
+        <div className="px-6 py-5 border-b border-zinc-100 flex items-center justify-between bg-gradient-to-r from-red-50/70 via-white to-rose-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#059669] text-white flex items-center justify-center font-bold shadow-md shadow-emerald-900/15">
-              <User className="w-5 h-5 text-emerald-200" />
+            <div className="w-10 h-10 rounded-xl bg-[#C71F37] text-white flex items-center justify-center font-bold shadow-md shadow-red-900/15">
+              <User className="w-5 h-5 text-red-200" />
             </div>
             <div>
-              <h2 className="font-serif text-xl font-bold text-[#064E3B]">
+              <h2 className="font-serif text-xl font-bold text-[#18181B]">
                 Matrimonial Profile Setup
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-zinc-500">
                 Step {step} of 4: {stepsList[step - 1].title} Details
               </p>
             </div>
@@ -162,18 +162,18 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Step Progress Bar */}
-        <div className="px-6 pt-5 pb-3 border-b border-slate-100 bg-[#F8FAF8]">
+        <div className="px-6 pt-5 pb-3 border-b border-zinc-100 bg-[#FAFAFA]">
           <div className="flex items-center justify-between relative">
-            <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-1 bg-slate-200 z-0" />
+            <div className="absolute top-1/2 left-0 right-0 -translate-y-1/2 h-1 bg-zinc-200 z-0" />
             <div 
-              className="absolute top-1/2 left-0 -translate-y-1/2 h-1 bg-[#059669] transition-all duration-300 z-0"
+              className="absolute top-1/2 left-0 -translate-y-1/2 h-1 bg-[#C71F37] transition-all duration-300 z-0"
               style={{ width: `${((step - 1) / 3) * 100}%` }}
             />
 
@@ -187,15 +187,15 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                       isPassed
-                        ? 'bg-emerald-600 text-white'
+                        ? 'bg-red-600 text-white'
                         : isCurrent
-                        ? 'bg-[#059669] text-white ring-4 ring-emerald-100 shadow-sm'
-                        : 'bg-white border-2 border-slate-300 text-slate-400'
+                        ? 'bg-[#C71F37] text-white ring-4 ring-red-100 shadow-sm'
+                        : 'bg-white border-2 border-zinc-300 text-zinc-400'
                     }`}
                   >
                     {isPassed ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                   </div>
-                  <span className={`text-[11px] font-semibold mt-1 hidden sm:block ${isCurrent ? 'text-[#059669]' : 'text-slate-500'}`}>
+                  <span className={`text-[11px] font-semibold mt-1 hidden sm:block ${isCurrent ? 'text-[#C71F37]' : 'text-zinc-500'}`}>
                     {s.title}
                   </span>
                 </div>
@@ -209,9 +209,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
           
           {isSuccess ? (
             <div className="py-12 text-center space-y-3">
-              <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto animate-bounce" />
-              <h3 className="font-serif text-2xl font-bold text-slate-900">Profile Updated Successfully!</h3>
-              <p className="text-sm text-slate-600">
+              <CheckCircle2 className="w-16 h-16 text-red-600 mx-auto animate-bounce" />
+              <h3 className="font-serif text-2xl font-bold text-zinc-900">Profile Updated Successfully!</h3>
+              <p className="text-sm text-zinc-600">
                 Your credentials and preferences have been synchronized with the matchmaking algorithm.
               </p>
             </div>
@@ -222,21 +222,21 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 <div className="space-y-4 animate-fadeIn">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Full Legal Name</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Full Legal Name</label>
                       <input
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Gender</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Gender</label>
                       <select
                         value={formData.gender}
                         onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       >
                         <option value="Bride">Bride</option>
                         <option value="Groom">Groom</option>
@@ -244,42 +244,42 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Age</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Age</label>
                       <input
                         type="number"
                         value={formData.age}
                         onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Height Description</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Height Description</label>
                       <input
                         type="text"
                         value={formData.height}
                         onChange={(e) => setFormData({ ...formData, height: e.target.value })}
                         placeholder="e.g. 5' 5 (165 cm)"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Current City</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Current City</label>
                       <input
                         type="text"
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Religion</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Religion</label>
                       <select
                         value={formData.religion}
                         onChange={(e) => setFormData({ ...formData, religion: e.target.value as any })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       >
                         <option value="Hindu">Hindu</option>
                         <option value="Muslim">Muslim</option>
@@ -290,21 +290,21 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Community / Caste</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Community / Caste</label>
                       <input
                         type="text"
                         value={formData.community}
                         onChange={(e) => setFormData({ ...formData, community: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Mother Tongue</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Mother Tongue</label>
                       <select
                         value={formData.motherTongue}
                         onChange={(e) => setFormData({ ...formData, motherTongue: e.target.value as any })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       >
                         <option value="Malayalam">Malayalam</option>
                         <option value="Tamil">Tamil</option>
@@ -325,44 +325,44 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 <div className="space-y-4 animate-fadeIn">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Highest Degree</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Highest Degree</label>
                       <input
                         type="text"
                         value={formData.degree}
                         onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
                         placeholder="e.g. Master of Design (M.Des)"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">College / Alma Mater</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">College / Alma Mater</label>
                       <input
                         type="text"
                         value={formData.college}
                         onChange={(e) => setFormData({ ...formData, college: e.target.value })}
                         placeholder="e.g. NID / IIT / IIM"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Job Designation</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Job Designation</label>
                       <input
                         type="text"
                         value={formData.occupationTitle}
                         onChange={(e) => setFormData({ ...formData, occupationTitle: e.target.value })}
                         placeholder="e.g. Lead Product Designer"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Industry Sector</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Industry Sector</label>
                       <select
                         value={formData.companySector}
                         onChange={(e) => setFormData({ ...formData, companySector: e.target.value as any })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       >
                         <option value="Creative & Design">Creative & Design</option>
                         <option value="Technology">Technology</option>
@@ -375,24 +375,24 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Current Employer</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Current Employer</label>
                       <input
                         type="text"
                         value={formData.employer}
                         onChange={(e) => setFormData({ ...formData, employer: e.target.value })}
                         placeholder="e.g. Tech Unicorn, Indiranagar"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Annual Compensation</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Annual Compensation</label>
                       <input
                         type="text"
                         value={formData.annualIncome}
                         onChange={(e) => setFormData({ ...formData, annualIncome: e.target.value })}
                         placeholder="e.g. ₹28 - 32 Lakhs"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -404,11 +404,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 <div className="space-y-4 animate-fadeIn">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Family Type</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Family Type</label>
                       <select
                         value={formData.familyType}
                         onChange={(e) => setFormData({ ...formData, familyType: e.target.value as any })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       >
                         <option value="Nuclear">Nuclear</option>
                         <option value="Joint">Joint</option>
@@ -416,11 +416,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Family Values</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Family Values</label>
                       <select
                         value={formData.familyValues}
                         onChange={(e) => setFormData({ ...formData, familyValues: e.target.value as any })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       >
                         <option value="Liberal & Cultured">Liberal & Cultured</option>
                         <option value="Moderate & Traditional">Moderate & Traditional</option>
@@ -430,46 +430,46 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Father's Occupation</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Father's Occupation</label>
                       <input
                         type="text"
                         value={formData.fatherOccupation}
                         onChange={(e) => setFormData({ ...formData, fatherOccupation: e.target.value })}
                         placeholder="e.g. Retired Chief Engineer, CPWD"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Mother's Occupation</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Mother's Occupation</label>
                       <input
                         type="text"
                         value={formData.motherOccupation}
                         onChange={(e) => setFormData({ ...formData, motherOccupation: e.target.value })}
                         placeholder="e.g. Professor of Literature"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Nakshatra (Birth Star)</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Nakshatra (Birth Star)</label>
                       <input
                         type="text"
                         value={formData.nakshatra}
                         onChange={(e) => setFormData({ ...formData, nakshatra: e.target.value })}
                         placeholder="e.g. Rohini"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-slate-700 block mb-1">Rasi (Moon Sign)</label>
+                      <label className="text-xs font-bold text-zinc-700 block mb-1">Rasi (Moon Sign)</label>
                       <input
                         type="text"
                         value={formData.rasi}
                         onChange={(e) => setFormData({ ...formData, rasi: e.target.value })}
                         placeholder="e.g. Vrishabha (Taurus)"
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -479,15 +479,15 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               {/* STEP 4: Bio & Photo */}
               {step === 4 && (
                 <div className="space-y-4 animate-fadeIn">
-                  <div className="flex items-center gap-4 p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl">
+                  <div className="flex items-center gap-4 p-4 bg-red-50/70 border border-red-200 rounded-2xl">
                     <img
                       src={formData.photoUrl}
                       alt="Avatar Preview"
-                      className="w-20 h-20 rounded-2xl object-cover ring-2 ring-[#059669] shadow-sm"
+                      className="w-20 h-20 rounded-2xl object-cover ring-2 ring-[#C71F37] shadow-sm"
                     />
                     <div className="flex-1 space-y-1">
-                      <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                        <Camera className="w-4 h-4 text-[#059669]" />
+                      <label className="text-xs font-bold text-zinc-800 flex items-center gap-1.5">
+                        <Camera className="w-4 h-4 text-[#C71F37]" />
                         <span>Profile Portrait Image URL</span>
                       </label>
                       <input
@@ -495,16 +495,16 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                         value={formData.photoUrl}
                         onChange={(e) => setFormData({ ...formData, photoUrl: e.target.value })}
                         placeholder="https://images.unsplash.com/..."
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs"
+                        className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-lg text-xs"
                       />
-                      <span className="text-[10px] text-slate-500">
+                      <span className="text-[10px] text-zinc-500">
                         Paste any high-resolution portrait URL for instant preview
                       </span>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                    <label className="text-xs font-bold text-zinc-700 block mb-1">
                       Personal Narrative & Outlook on Marriage
                     </label>
                     <textarea
@@ -512,9 +512,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       value={formData.bio}
                       onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                       placeholder="Share a thoughtful introduction about your passions, values, and ideal partnership..."
-                      className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
                     />
-                    <span className="text-[11px] text-slate-400 mt-1 block">
+                    <span className="text-[11px] text-zinc-400 mt-1 block">
                       Authentic bios receive 4.2x higher mutual interest acceptance.
                     </span>
                   </div>
@@ -527,13 +527,13 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
         {/* Wizard Footer Controls */}
         {!isSuccess && (
-          <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50">
+          <div className="px-6 py-4 border-t border-zinc-100 flex items-center justify-between bg-zinc-50">
             <button
               type="button"
               onClick={handlePrev}
               disabled={step === 1}
               className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                step === 1 ? 'opacity-40 cursor-not-allowed text-slate-400' : 'text-slate-700 hover:bg-slate-200/70'
+                step === 1 ? 'opacity-40 cursor-not-allowed text-zinc-400' : 'text-zinc-700 hover:bg-zinc-200/70'
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -543,7 +543,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
             <button
               type="button"
               onClick={handleNext}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold shadow-md shadow-emerald-900/15 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#C71F37] hover:bg-[#A6192D] text-white text-xs font-bold shadow-md shadow-red-900/15 transition-all cursor-pointer"
             >
               <span>{step === 4 ? 'Save & Sync Profile' : 'Next Step'}</span>
               {step !== 4 && <ChevronRight className="w-4 h-4" />}

@@ -53,6 +53,7 @@ export interface PartnerPreferences {
 }
 
 export interface MatrimonialProfile {
+  mobile?: string;
   id: string;
   name: string;
   gender: 'Bride' | 'Groom';

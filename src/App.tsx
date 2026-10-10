@@ -25,9 +25,11 @@ import { SuccessStories } from './components/SuccessStories';
 import { Footer } from './components/Footer';
 import Login from './Login';
 import { api, hasSession, loadProfiles, connectionFor } from './api';
-import Register from './Register';
+import MobileAuthPage from './MobileAuthPage';
+import MobileAuth from './components/MobileAuth';
 
 function Home() {
+  const [showWelcome, setShowWelcome] = useState(() => !hasSession() && !sessionStorage.getItem('you2me-auth-dismissed'));
   const navigate = useNavigate();
   const [apiError, setApiError] = useState('');
   const [loadingProfiles, setLoadingProfiles] = useState(true);
@@ -230,7 +232,6 @@ function Home() {
 
       {apiError && <p role="alert" className="p-4 text-center text-red-700">{apiError} <button onClick={() => window.location.reload()} className="underline">Retry</button></p>}
       {loadingProfiles && <p role="status" className="p-4 text-center">Loading profiles...</p>}
-      {!hasSession() && <p className="p-4 text-center">Sign in to discover profiles and connect. <button className="underline" onClick={() => navigate('/register')}>Create an account</button></p>}
       {/* Global Luxury Minimal Header */}
       <Navbar
         isLoggedIn={hasSession()}
@@ -514,6 +515,7 @@ function Home() {
       </main>
 
       {/* Global Modals */}
+      {showWelcome && <MobileAuth registration onClose={() => { sessionStorage.setItem('you2me-auth-dismissed', 'true'); setShowWelcome(false); }} />}
 
       {/* 1. Detailed Profile View Modal */}
       {currentUser && <ProfileModal
@@ -552,8 +554,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<MobileAuthPage />} />
+        <Route path="/login/email" element={<Login />} />
+        <Route path="/register" element={<MobileAuthPage registration />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>

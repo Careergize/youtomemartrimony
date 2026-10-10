@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { MatrimonialProfile } from '../data/mockProfiles';
 import { ProfileCard } from './ProfileCard';
 
@@ -50,7 +50,6 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
         {/* Section Header */}
         <div className="space-y-2.5 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             <span>Verified Profiles</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#064E3B] tracking-tight">

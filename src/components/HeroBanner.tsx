@@ -305,7 +305,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 </span>
               </div>
               <span className="font-semibold text-red-800">
-                Over 5,000+ verified members active this week
+                Be part of our beginning. Find your forever.
               </span>
             </div>
 

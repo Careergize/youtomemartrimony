@@ -75,7 +75,7 @@ function Home() {
   };
 
   const [filters, setFilters] = useState<FilterState>(initialFilters);
-  const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortBy, setSortBy] = useState<'compatibility' | 'ageAsc' | 'ageDesc'>('compatibility');
   const [passedProfileIds, setPassedProfileIds] = useState<string[]>([]);
   const [notificationToast, setNotificationToast] = useState<string | null>(null);

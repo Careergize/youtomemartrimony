@@ -7,8 +7,8 @@ export async function api<T>(path: string, method = 'GET', body?: unknown): Prom
   const token = sessionStorage.getItem(TOKEN_KEY);
   const response = await fetch(apiUrl(path), {
     method,
-    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Token ${token}` } : {}) },
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    headers: { ...(body instanceof FormData ? {} : { 'Content-Type': 'application/json' }), ...(token ? { Authorization: `Token ${token}` } : {}) },
+    ...(body === undefined ? {} : { body: body instanceof FormData ? body : JSON.stringify(body) }),
   });
   if (response.status === 401) sessionStorage.removeItem(TOKEN_KEY);
   if (!response.ok) {

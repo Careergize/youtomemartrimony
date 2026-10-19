@@ -89,8 +89,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
           </span>
 
           <span className="flex items-center gap-1.5 bg-black/45 backdrop-blur-sm px-2.5 py-1 rounded-full text-[11px]">
-            <span className={`w-2 h-2 rounded-full ${profile.isOnline ? 'bg-red-400 animate-pulse' : 'bg-zinc-300'}`} />
-            <span>{profile.isOnline ? 'Active Now' : 'Verified'}</span>
+            <span className={`w-2 h-2 rounded-full ${profile.isOnline ? 'bg-emerald-400' : 'bg-zinc-300'}`} />
+            <span className={profile.isOnline ? 'text-emerald-300' : ''}>{profile.isOnline ? 'Online' : 'Offline'}</span>
           </span>
         </div>
       </div>

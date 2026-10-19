@@ -36,6 +36,25 @@ function StreamVideo({ stream, muted = false, className = '' }: { stream: MediaS
 }
 
 export function CallProvider({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    let pending = false;
+    const heartbeat = async () => {
+      if (pending || !hasSession() || document.hidden) return;
+      pending = true;
+      try { await api('presence/', 'POST'); }
+      catch { /* A missed heartbeat expires naturally; retry next interval. */ }
+      finally { pending = false; }
+    };
+    void heartbeat();
+    const timer = window.setInterval(() => { void heartbeat(); }, 25000);
+    window.addEventListener('focus', heartbeat);
+    document.addEventListener('visibilitychange', heartbeat);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('focus', heartbeat);
+      document.removeEventListener('visibilitychange', heartbeat);
+    };
+  }, []);
   const [call, setCall] = useState<Call | null>(null);
   const callRef = useRef<Call | null>(null);
   const peer = useRef<RTCPeerConnection | null>(null);
@@ -54,6 +73,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
   const lastHeartbeat = useRef(0);
+  const connectingSince = useRef(0);
 
   const update = (value: Call | null) => { callRef.current = value; setCall(value); };
   const cleanup = () => {
@@ -61,7 +81,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
     peer.current?.close(); peer.current = null;
     local.current?.getTracks().forEach(track => track.stop()); local.current = null;
     setLocalStream(null); setRemoteStream(null); setConnected(false);
-    candidates.current = []; received.current = 0; lastHeartbeat.current = 0;
+    candidates.current = []; received.current = 0; lastHeartbeat.current = 0; connectingSince.current = 0;
     setMuted(false); setCameraOff(false); working.current = false; setBusy(false);
     update(null);
   };
@@ -177,6 +197,17 @@ export function CallProvider({ children }: { children: ReactNode }) {
     update(latest);
     const pc = peer.current;
     if (!pc) return;
+    if (latest.status === 'active') {
+      if (pc.connectionState === 'connected') connectingSince.current = 0;
+      else {
+        if (!connectingSince.current) connectingSince.current = Date.now();
+        if (Date.now() - connectingSince.current > 30000) {
+          setError('The call was accepted, but the media connection timed out. Try both devices on the same Wi-Fi. If that works, a TURN relay is needed for calls across these networks.');
+          await finish();
+          return;
+        }
+      }
+    }
     if (latest.outgoing && latest.answer?.sdp && !pc.remoteDescription) await pc.setRemoteDescription(latest.answer);
     if (pc.remoteDescription) {
       while (received.current < latest.candidates.length && peer.current === pc) {

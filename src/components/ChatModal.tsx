@@ -37,13 +37,17 @@ export const ChatModal: React.FC<ChatModalProps> = ({
   const [connectionId, setConnectionId] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
+  const [online, setOnline] = useState(false);
   useEffect(() => {
     if (!isOpen || !profile) return;
     let active = true;
-    setMessages([]); setConnectionId(null); setError('');
+    setMessages([]); setConnectionId(null); setError(''); setOnline(profile.isOnline);
     const load = async () => {
       try {
-        const connection = await connectionFor(profile.id);
+        const [connection, latestProfile] = await Promise.all([
+          connectionFor(profile.id), api<MatrimonialProfile>(`profiles/${profile.id}/`),
+        ]);
+        if (active) setOnline(latestProfile.isOnline);
         if (connection.status !== 'accepted') throw new Error('Messaging unlocks after your interest is accepted.');
         let path: string | null = `interests/${connection.id}/messages/`;
         const history: Message[] = [];
@@ -93,7 +97,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 alt={profile.name}
                 className="w-11 h-11 rounded-full object-cover ring-2 ring-red-200"
               />
-              <span className="absolute bottom-0 right-0 w-3 h-3 bg-red-500 rounded-full ring-2 ring-white" />
+              <span aria-label={online ? 'Online' : 'Offline'} className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ring-2 ring-white ${online ? 'bg-emerald-500' : 'bg-zinc-300'}`} />
             </div>
 
             <div>
@@ -101,6 +105,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 <h3 className="font-serif font-bold text-base text-[#18181B]">
                   {profile.name}
                 </h3>
+                {online && <span className="text-xs font-semibold text-emerald-700">Online</span>}
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-800">
                   Verified Match
                 </span>

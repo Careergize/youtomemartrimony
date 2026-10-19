@@ -96,7 +96,7 @@ export interface MatrimonialProfile {
   photos: string[];
   isShortlisted?: boolean;
   interestStatus?: 'none' | 'sent' | 'received' | 'accepted' | 'declined';
-  lastActive: string;
+  lastActive: string | null;
   isOnline: boolean;
 }
 

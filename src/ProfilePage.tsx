@@ -55,7 +55,7 @@ const sections: { title: string; fields: Field[] }[] = [
     { path: 'partnerPreferences.manglikPreference', label: 'Manglik preference', options: ["Doesn't Matter", 'Non-Manglik', 'Manglik', 'Anshik / Partial'] },
   ] },
   { title: 'About you & photo', fields: [
-    { path: 'bio', label: 'About you', type: 'textarea' }, { path: 'photos.0', label: 'Profile photo URL', type: 'url' },
+    { path: 'bio', label: 'About you', type: 'textarea' },
     { path: 'hobbies', label: 'Hobbies (comma-separated)', type: 'list' },
     { path: 'values', label: 'Personality & values (comma-separated)', type: 'list' },
     { path: 'languagesSpoken', label: 'Languages spoken (comma-separated)', type: 'list' },
@@ -76,6 +76,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
 
@@ -100,9 +101,21 @@ export default function ProfilePage() {
     });
     setNotice('');
   };
+  const uploadPhoto = async (file: File) => {
+    if (uploading || saving) return;
+    if (file.size > 5 * 1024 * 1024) { setError('Choose a photo smaller than 5 MB.'); return; }
+    setUploading(true); setError(''); setNotice('');
+    try {
+      const data = new FormData(); data.append('photo', file);
+      const result = await api<{ url: string }>('me/photo/', 'POST', data);
+      update({ path: 'photos.0', label: 'Profile photo' }, result.url);
+      setNotice('Photo uploaded. Choose Save changes to update your profile.');
+    } catch (err) { setError(err instanceof Error ? err.message : 'Unable to upload your photo.'); }
+    finally { setUploading(false); }
+  };
   const save = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!draft || saving) return;
+    if (!draft || saving || uploading) return;
     setSaving(true); setError(''); setNotice('');
     try {
       const payload = structuredClone(draft);
@@ -141,21 +154,32 @@ export default function ProfilePage() {
           <div><h2 className="text-xl font-semibold">{saved.name}</h2><p className="text-sm text-zinc-500">{saved.age ? `${saved.age} years` : 'Age not added'} · {saved.city || 'City not added'}</p>{saved.mobile && <p className="mt-1 text-sm text-zinc-600">{saved.mobile} · Private</p>}<p className="mt-1 text-xs text-red-700">{saved.verification.mobileVerified ? 'Mobile verified' : saved.verification.badgeText}</p></div>
         </div>
         <form onSubmit={save} className="space-y-6">
+          <section className="rounded-2xl border border-red-100 bg-white p-5 sm:p-6">
+            <h2 className="font-serif text-xl font-bold mb-4">Profile photo</h2>
+            {(editing ? draft : saved).photos[0] && <img src={(editing ? draft : saved).photos[0]} alt="Profile photo preview" className="mb-4 h-40 w-40 rounded-2xl object-cover" />}
+            {editing ? <>
+              <label className="block text-sm font-semibold">Upload a photo
+                <input type="file" accept="image/jpeg,image/png,image/webp" disabled={saving || uploading} onChange={event => { const file = event.target.files?.[0]; event.target.value = ''; if (file) void uploadPhoto(file); }} className="mt-2 block w-full text-sm file:mr-4 file:rounded-xl file:border-0 file:bg-red-50 file:px-4 file:py-3 file:font-semibold file:text-red-700" />
+              </label>
+              <p className="mt-2 text-xs text-zinc-500">JPEG, PNG, or WebP. Maximum 5 MB.</p>
+              {uploading && <p role="status" className="mt-2 text-sm">Uploading photo...</p>}
+            </> : !saved.photos[0] && <p className="text-sm text-zinc-500">Choose Edit profile to upload your photo.</p>}
+          </section>
           {sections.map(section => <section key={section.title} className="rounded-2xl border border-red-100 bg-white p-5 sm:p-6">
             <h2 className="font-serif text-xl font-bold text-[#18181B] mb-5">{section.title}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {section.fields.map(field => <div key={field.path} className={field.type === 'textarea' ? 'sm:col-span-2' : ''}>
                 {editing ? <label className="block text-sm font-semibold text-zinc-700">{field.label}
-                  {field.options ? <select required={field.required || field.path === 'gender'} value={fieldValue(draft, field.path)} onChange={e => update(field, e.target.value)} disabled={saving} className="mt-1.5 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"><option value="">Select {field.label.toLowerCase()}</option>{field.options.map(option => <option key={option}>{option}</option>)}</select>
-                    : field.type === 'textarea' ? <textarea rows={5} value={fieldValue(draft, field.path)} onChange={e => update(field, e.target.value)} disabled={saving} className="mt-1.5 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
-                    : <input type={field.type === 'list' ? 'text' : field.type || 'text'} required={field.required} min={field.min} max={field.max} value={fieldValue(draft, field.path)} onChange={e => update(field, e.target.value)} disabled={saving} className="mt-1.5 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />}
+                  {field.options ? <select required={field.required || field.path === 'gender'} value={fieldValue(draft, field.path)} onChange={e => update(field, e.target.value)} disabled={saving || uploading} className="mt-1.5 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"><option value="">Select {field.label.toLowerCase()}</option>{field.options.map(option => <option key={option}>{option}</option>)}</select>
+                    : field.type === 'textarea' ? <textarea rows={5} value={fieldValue(draft, field.path)} onChange={e => update(field, e.target.value)} disabled={saving || uploading} className="mt-1.5 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    : <input type={field.type === 'list' ? 'text' : field.type || 'text'} required={field.required} min={field.min} max={field.max} value={fieldValue(draft, field.path)} onChange={e => update(field, e.target.value)} disabled={saving || uploading} className="mt-1.5 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />}
                 </label> : <><p className="text-xs font-semibold text-zinc-500">{field.label}</p><p className="mt-1 text-sm whitespace-pre-wrap break-words">{fieldValue(saved, field.path) || 'Not added'}</p></>}
               </div>)}
             </div>
           </section>)}
           {editing && <div className="flex justify-end gap-3">
-            <button type="button" disabled={saving} onClick={() => { setDraft(structuredClone(saved)); setEditing(false); setError(''); }} className="rounded-xl border border-zinc-300 px-5 py-3 text-sm font-semibold disabled:opacity-50">Cancel</button>
-            <button type="submit" disabled={saving} className="rounded-xl bg-red-700 px-5 py-3 text-sm font-semibold text-white disabled:opacity-50">{saving ? 'Saving...' : 'Save changes'}</button>
+            <button type="button" disabled={saving || uploading} onClick={() => { setDraft(structuredClone(saved)); setEditing(false); setError(''); }} className="rounded-xl border border-zinc-300 px-5 py-3 text-sm font-semibold disabled:opacity-50">Cancel</button>
+            <button type="submit" disabled={saving || uploading} className="rounded-xl bg-red-700 px-5 py-3 text-sm font-semibold text-white disabled:opacity-50">{saving ? 'Saving...' : 'Save changes'}</button>
           </div>}
         </form>
       </>}

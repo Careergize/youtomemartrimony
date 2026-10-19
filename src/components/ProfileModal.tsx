@@ -117,6 +117,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                 <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#18181B]">
                   {profile.name}
                 </h2>
+                {profile.isOnline && <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><span className="h-2 w-2 rounded-full bg-emerald-500" />Online</span>}
                 <span className="text-sm font-semibold text-zinc-500">
                   ({profile.age} yrs, {profile.height})
                 </span>

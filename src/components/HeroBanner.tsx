@@ -165,7 +165,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                       onChange={(e) => setMinAge(Number(e.target.value))}
                       className="bg-transparent text-xs sm:text-sm font-bold text-zinc-800 focus:outline-none cursor-pointer"
                     >
-                      {[21, 23, 25, 27, 29, 31].map((a) => (
+                      {Array.from({ length: 83 }, (_, i) => i + 18).map((a) => (
                         <option key={a} value={a}>{a} Yrs</option>
                       ))}
                     </select>
@@ -175,7 +175,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                       onChange={(e) => setMaxAge(Number(e.target.value))}
                       className="bg-transparent text-xs sm:text-sm font-bold text-zinc-800 focus:outline-none cursor-pointer"
                     >
-                      {[26, 28, 30, 32, 35, 40, 45].map((a) => (
+                      {Array.from({ length: 83 }, (_, i) => i + 18).map((a) => (
                         <option key={a} value={a}>{a} Yrs</option>
                       ))}
                     </select>

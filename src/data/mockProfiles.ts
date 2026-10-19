@@ -5,24 +5,29 @@ export interface Education {
 }
 
 export interface Occupation {
+  employmentType?: string;
   title: string;
-  companySector: 'Technology' | 'Healthcare' | 'Finance' | 'Creative & Design' | 'Engineering' | 'Civil Services' | 'Business & Entrepreneurship';
+  companySector: 'Technology' | 'Healthcare' | 'Finance' | 'Creative & Design' | 'Engineering' | 'Civil Services' | 'Business & Entrepreneurship' | 'Teaching / Academia' | 'Other';
   employer: string;
   annualIncome: string; // e.g. "₹25 - 35 Lakhs" or "$140,000"
-  incomeBracket: '10-20L' | '20-35L' | '35-50L' | '50L+';
+  incomeBracket: '0-2L' | '2-5L' | '5-10L' | '10-20L' | '20-35L' | '35-50L' | '50L+';
 }
 
 export interface FamilyDetails {
+  sisters?: string;
+  brothers?: string;
+  ancestralOrigin?: string;
   type: 'Nuclear' | 'Joint';
   fatherOccupation: string;
   motherOccupation: string;
   siblings: string;
   nativePlace: string;
   values: 'Liberal & Cultured' | 'Moderate & Traditional' | 'Progressive' | 'Orthodox';
-  affluenceLevel: 'Upper Middle Class' | 'High Net Worth' | 'Affluent / Business';
+  affluenceLevel: 'Middle Class' | 'Upper Middle Class' | 'High Net Worth' | 'Affluent / Business';
 }
 
 export interface HoroscopeDetails {
+  horoscopeUrl?: string;
   nakshatra: string;
   rasi: string;
   manglik: 'Non-Manglik' | 'Manglik' | 'Anshik / Partial' | 'Doesn\'t Matter';
@@ -53,6 +58,11 @@ export interface PartnerPreferences {
 }
 
 export interface MatrimonialProfile {
+  weightKg?: string;
+  bodyType?: string;
+  profileCreatedBy?: string;
+  gothram?: string;
+  dateOfBirth?: string;
   mobile?: string;
   id: string;
   name: string;

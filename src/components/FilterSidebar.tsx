@@ -197,8 +197,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <span className="text-[10px] font-semibold text-zinc-400 w-8">Min:</span>
               <input
                 type="range"
-                min="21"
-                max="45"
+                min="18"
+                max="99"
                 value={filters.minAge}
                 onChange={(e) => {
                   const val = Number(e.target.value);
@@ -212,8 +212,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <span className="text-[10px] font-semibold text-zinc-400 w-8">Max:</span>
               <input
                 type="range"
-                min="22"
-                max="50"
+                min="19"
+                max="100"
                 value={filters.maxAge}
                 onChange={(e) => {
                   const val = Number(e.target.value);
@@ -241,8 +241,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <span className="text-[10px] font-semibold text-zinc-400 w-8">Min:</span>
               <input
                 type="range"
-                min="57"
-                max="75"
+                min="36"
+                max="95"
                 value={filters.minHeightInches}
                 onChange={(e) => {
                   const val = Number(e.target.value);
@@ -258,8 +258,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <span className="text-[10px] font-semibold text-zinc-400 w-8">Max:</span>
               <input
                 type="range"
-                min="58"
-                max="78"
+                min="37"
+                max="96"
                 value={filters.maxHeightInches}
                 onChange={(e) => {
                   const val = Number(e.target.value);
@@ -327,7 +327,9 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               'Creative & Design',
               'Engineering',
               'Civil Services',
-              'Business & Entrepreneurship'
+              'Business & Entrepreneurship',
+              'Teaching / Academia',
+              'Other'
             ].map((sector) => (
               <label key={sector} className="flex items-center gap-2 text-xs font-medium text-zinc-700 cursor-pointer hover:text-zinc-900 select-none">
                 <input
@@ -349,6 +351,9 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </label>
           <div className="grid grid-cols-2 gap-1.5">
             {[
+              { label: 'Up to ₹2L', val: '0-2L' },
+              { label: '₹2L - 5L', val: '2-5L' },
+              { label: '₹5L - 10L', val: '5-10L' },
               { label: '₹10L - 20L', val: '10-20L' },
               { label: '₹20L - 35L', val: '20-35L' },
               { label: '₹35L - 50L', val: '35-50L' },

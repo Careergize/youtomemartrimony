@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, UserRound, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   isLoggedIn: boolean;
   userName?: string;
+  userPhoto?: string;
   onSignOut: () => void;
   activeTab: 'discovery' | 'interests' | 'shortlist' | 'messages';
   setActiveTab: (tab: 'discovery' | 'interests' | 'shortlist' | 'messages') => void;
@@ -18,6 +19,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   isLoggedIn,
   userName,
+  userPhoto,
   onSignOut,
   activeTab,
   setActiveTab,
@@ -27,6 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenProfile,
   onScrollToSearch
 }) => {
+  const [failedPhoto, setFailedPhoto] = useState<string>();
+  const showPhoto = Boolean(userPhoto && userPhoto !== failedPhoto);
   return (
     <header className="site-header sticky top-0 z-50 w-full backdrop-blur-xl bg-white/95 border-b border-zinc-200 transition-all shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -129,8 +133,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             {isLoggedIn ? (
               <div className="flex items-center rounded-2xl border border-zinc-200 bg-white px-1.5 py-1 shadow-sm">
                 <button type="button" onClick={onOpenProfile} title="View your profile" className="group flex min-w-16 max-w-28 sm:max-w-36 flex-col items-center gap-1 rounded-xl px-3 py-1 text-[11px] font-semibold text-zinc-700 hover:bg-red-50 hover:text-red-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 cursor-pointer">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 ring-1 ring-red-100 group-hover:bg-red-100 transition-colors">
-                    <UserRound className="h-4 w-4 text-red-700" aria-hidden="true" />
+                  <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-red-50 ring-1 ring-red-100 group-hover:bg-red-100 transition-colors">
+                    {showPhoto ? <img src={userPhoto} alt={`${userName || 'Your'} profile photo`} className="h-full w-full object-cover" onError={() => setFailedPhoto(userPhoto)} /> : <UserRound className="h-4 w-4 text-red-700" aria-hidden="true" />}
                   </span>
                   <span className="w-full truncate">{userName || 'Your account'}</span>
                 </button>

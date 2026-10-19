@@ -1,10 +1,11 @@
 import type { MatrimonialProfile } from './data/mockProfiles';
 
 const TOKEN_KEY = 'you2me-token';
+export const apiUrl = (path: string) => `https://api.you2mematrimonial.com/api/${path.replace(/^\/+/, '')}`;
 export const hasSession = () => Boolean(sessionStorage.getItem(TOKEN_KEY));
 export async function api<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
   const token = sessionStorage.getItem(TOKEN_KEY);
-  const response = await fetch(`/api/${path}`, {
+  const response = await fetch(apiUrl(path), {
     method,
     headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Token ${token}` } : {}) },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
@@ -21,7 +22,11 @@ export async function authenticate(path: 'login' | 'register', data: unknown) {
   sessionStorage.setItem(TOKEN_KEY, result.token);
 }
 export async function loadProfiles() {
-  let path: string | null = 'profiles/';
+  const [discovery, connections] = await Promise.all([loadProfilePages('profiles/'), loadProfilePages('profiles/?connections=true')]);
+  return [...new Map([...discovery, ...connections].map(profile => [profile.id, profile])).values()];
+}
+async function loadProfilePages(initialPath: string) {
+  let path: string | null = initialPath;
   const profiles: MatrimonialProfile[] = [];
   while (path) {
     const page: { results: MatrimonialProfile[]; next: string | null } = await api(path);

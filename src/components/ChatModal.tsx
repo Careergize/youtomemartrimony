@@ -3,11 +3,14 @@ import {
   X, 
   Send, 
   Lock,
-  CheckCheck
+  CheckCheck,
+  Phone,
+  Video
 } from 'lucide-react';
 import type { MatrimonialProfile } from '../data/mockProfiles';
 
 import { api, connectionFor } from '../api';
+import { useCalls } from './Calls';
 
 interface ChatModalProps {
   profile: MatrimonialProfile | null;
@@ -28,6 +31,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const startCall = useCalls();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputVal, setInputVal] = useState('');
   const [connectionId, setConnectionId] = useState<number | null>(null);
@@ -107,6 +111,9 @@ export const ChatModal: React.FC<ChatModalProps> = ({
             </div>
           </div>
 
+          <div className="flex items-center gap-1">
+          <button type="button" aria-label="Start voice call" title="Voice call" disabled={!connectionId} onClick={() => startCall(profile.id, 'voice')} className="p-2 rounded-full hover:bg-red-100 text-red-700 disabled:opacity-40"><Phone size={20} /></button>
+          <button type="button" aria-label="Start video call" title="Video call" disabled={!connectionId} onClick={() => startCall(profile.id, 'video')} className="p-2 rounded-full hover:bg-red-100 text-red-700 disabled:opacity-40"><Video size={20} /></button>
           <button
             type="button"
             onClick={onClose}
@@ -114,6 +121,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
           >
             <X className="w-5 h-5" />
           </button>
+          </div>
         </div>
 
         {/* Safety & Privacy Notice */}

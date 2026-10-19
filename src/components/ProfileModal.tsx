@@ -16,6 +16,7 @@ import {
   Compass 
 } from 'lucide-react';
 import type { MatrimonialProfile } from '../data/mockProfiles';
+import { ProfileDetails } from './ProfileDetails';
 
 interface ProfileModalProps {
   profile: MatrimonialProfile | null;
@@ -63,28 +64,39 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
     },
     {
       title: 'Religion & Faith',
-      preference: profile.partnerPreferences.religion.join(', '),
+      preference: profile.partnerPreferences.religion.join(', ') || 'Any',
       yourValue: `${currentUser.religion} (${currentUser.community})`,
-      isMatch: profile.partnerPreferences.religion.includes(currentUser.religion)
+      isMatch: (profile.partnerPreferences.religion.length === 0 || profile.partnerPreferences.religion.includes(currentUser.religion))
     },
     {
       title: 'Mother Tongue',
-      preference: profile.partnerPreferences.motherTongue.join(', '),
+      preference: profile.partnerPreferences.motherTongue.join(', ') || 'Any',
       yourValue: currentUser.motherTongue,
-      isMatch: profile.partnerPreferences.motherTongue.includes(currentUser.motherTongue)
+      isMatch: (profile.partnerPreferences.motherTongue.length === 0 || profile.partnerPreferences.motherTongue.includes(currentUser.motherTongue))
     },
     {
       title: 'Education & Career Sector',
-      preference: profile.partnerPreferences.occupationSectors.slice(0, 3).join(', '),
+      preference: profile.partnerPreferences.occupationSectors.slice(0, 3).join(', ') || 'Any',
       yourValue: `${currentUser.education.degree}, ${currentUser.occupation.companySector}`,
-      isMatch: profile.partnerPreferences.occupationSectors.includes(currentUser.occupation.companySector)
+      isMatch: (profile.partnerPreferences.occupationSectors.length === 0 || profile.partnerPreferences.occupationSectors.includes(currentUser.occupation.companySector))
     },
     {
       title: 'Dietary Alignment',
-      preference: profile.partnerPreferences.diet.join(', '),
+      preference: profile.partnerPreferences.diet.join(', ') || 'Any',
       yourValue: currentUser.diet,
-      isMatch: profile.partnerPreferences.diet.includes(currentUser.diet)
+      isMatch: (profile.partnerPreferences.diet.length === 0 || profile.partnerPreferences.diet.includes(currentUser.diet))
     }
+    ,...([
+      ['Marital status', profile.partnerPreferences.maritalStatus, currentUser.maritalStatus],
+      ['Education', profile.partnerPreferences.education, currentUser.education.degree],
+      ['Preferred location', profile.partnerPreferences.preferredLocations, currentUser.city],
+    ] as [string, string[], string][]).map(([title, preferences, value]) => ({
+      title, preference: preferences.join(', ') || 'Any', yourValue: value || 'Not specified',
+      isMatch: preferences.length === 0 || preferences.includes(value),
+    })),
+    { title: 'Manglik preference', preference: profile.partnerPreferences.manglikPreference,
+      yourValue: currentUser.horoscope.manglik,
+      isMatch: profile.partnerPreferences.manglikPreference === "Doesn't Matter" || profile.partnerPreferences.manglikPreference === currentUser.horoscope.manglik },
   ];
 
   return (
@@ -317,6 +329,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             {/* Tab 1: About & Lifestyle */}
             {activeTab === 'about' && (
               <div className="space-y-6 animate-fadeIn">
+                <ProfileDetails profile={profile} />
                 <div className="space-y-2 text-left">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Personal Narrative</h4>
                   <p className="text-sm leading-relaxed text-zinc-700 bg-[#FAFAFA] p-4 rounded-2xl border border-zinc-200">
@@ -400,6 +413,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                     <div>
                       <p className="text-sm font-bold text-zinc-900">{profile.occupation.title}</p>
                       <p className="text-xs text-zinc-600 mt-0.5">{profile.occupation.employer}</p>
+                      <p className="text-xs text-zinc-600 mt-1">{profile.occupation.employmentType || 'Employment type not specified'} · {profile.occupation.companySector}</p>
                       <p className="text-xs text-[#C71F37] font-semibold mt-1">
                         Compensation: {profile.occupation.annualIncome} (Gross)
                       </p>
@@ -503,7 +517,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-100 text-zinc-600 text-xs font-medium">
-                            Flexible
+                            Does not match
                           </span>
                         )}
                       </div>

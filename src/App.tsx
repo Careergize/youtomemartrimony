@@ -27,6 +27,7 @@ import Login from './Login';
 import { api, hasSession, loadProfiles, connectionFor } from './api';
 import MobileAuthPage from './MobileAuthPage';
 import MobileAuth from './components/MobileAuth';
+import { CallProvider } from './components/Calls';
 
 function Home() {
   const [showWelcome, setShowWelcome] = useState(() => !hasSession() && !sessionStorage.getItem('you2me-auth-dismissed'));
@@ -51,6 +52,31 @@ function Home() {
   const [currentUser, setCurrentUser] = useState<MatrimonialProfile | null>(null);
   const [profiles, setProfiles] = useState<MatrimonialProfile[]>([]);
   const [activeNavTab, setActiveNavTab] = useState<'discovery' | 'interests' | 'shortlist' | 'messages'>('discovery');
+  useEffect(() => {
+    if (!hasSession()) return;
+    let active = true;
+    let pending = false;
+    const refresh = async () => {
+      if (pending || document.hidden || !hasSession()) return;
+      pending = true;
+      try {
+        const list = await loadProfiles();
+        if (active) { setProfiles(list); setApiError(''); }
+      } catch (err) {
+        if (active) setApiError(err instanceof Error ? err.message : 'Unable to refresh connections.');
+      } finally { pending = false; }
+    };
+    void refresh();
+    const timer = window.setInterval(() => { void refresh(); }, 15000);
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [activeNavTab]);
   
   // Modals state
   const [selectedProfile, setSelectedProfile] = useState<MatrimonialProfile | null>(null);
@@ -61,10 +87,10 @@ function Home() {
   const initialFilters: FilterState = {
     searchQuery: '',
     gender: 'All',
-    minAge: 21,
-    maxAge: 45,
-    minHeightInches: 58,
-    maxHeightInches: 76,
+    minAge: 18,
+    maxAge: 100,
+    minHeightInches: 36,
+    maxHeightInches: 96,
     maritalStatuses: [],
     educationList: [],
     occupationSectors: [],
@@ -236,6 +262,7 @@ function Home() {
       <Navbar
         isLoggedIn={hasSession()}
         userName={currentUser?.name}
+        userPhoto={currentUser?.photos[0]}
         onSignOut={async () => {
           try {
             await api('auth/logout/', 'POST');
@@ -282,6 +309,7 @@ function Home() {
             {/* Handpicked Alliances / Highlighted Profiles */}
             <HighlightedProfiles
               profiles={profiles}
+              emptyMessage={loadingProfiles ? 'Loading profiles...' : apiError ? 'Profiles could not be loaded. Use Retry above.' : !hasSession() ? 'Log in to browse member profiles.' : 'No other complete member profiles are available yet.'}
               onViewProfile={(p) => setSelectedProfile(p)}
               onToggleShortlist={handleToggleShortlist}
               onSendInterest={handleSendInterest}
@@ -417,12 +445,13 @@ function Home() {
                         <Search className="w-8 h-8" />
                       </div>
                       <h3 className="font-serif text-2xl font-bold text-zinc-800">
-                        No Matching Profiles Found
+                        {loadingProfiles ? 'Loading Profiles' : apiError ? 'Unable to Load Profiles' : !hasSession() ? 'Log In to View Profiles' : profiles.length === 0 ? 'No Member Profiles Available Yet' : 'No Matching Profiles Found'}
                       </h3>
                       <p className="text-xs sm:text-sm text-zinc-500 max-w-md mx-auto">
-                        We couldn't find profiles matching all your specific criteria. Try broadening your age, height, or profession filters.
+                        {loadingProfiles ? 'Please wait while we load member profiles.' : apiError ? 'Use Retry above to load profiles again.' : !hasSession() ? 'Sign in to browse members and find your match.' : profiles.length === 0 ? 'Discovery shows other active members who have added their age and profile type. Your own profile is available under My Profile.' : "We couldn't find profiles matching your criteria. Try clearing your filters or restoring passed profiles."}
                       </p>
-                      <div className="flex items-center justify-center gap-3">
+                      {!loadingProfiles && !apiError && !hasSession() && <button type="button" onClick={() => navigate('/login')} className="rounded-xl bg-[#C71F37] px-6 py-2.5 text-sm font-bold text-white">Log in</button>}
+                      {profiles.length > 0 && <div className="flex items-center justify-center gap-3">
                         <button
                           type="button"
                           onClick={handleResetFilters}
@@ -441,7 +470,7 @@ function Home() {
                             <span>Show Filters</span>
                           </button>
                         )}
-                      </div>
+                      </div>}
                     </div>
                   ) : (
                     <div className={`grid grid-cols-1 md:grid-cols-2 ${isFilterOpen ? 'xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4'} gap-6`}>
@@ -552,6 +581,7 @@ function Home() {
 function App() {
   return (
     <BrowserRouter>
+      <CallProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<MobileAuthPage />} />
@@ -559,6 +589,7 @@ function App() {
         <Route path="/register" element={<MobileAuthPage registration />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
+      </CallProvider>
     </BrowserRouter>
   );
 }

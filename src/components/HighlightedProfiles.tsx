@@ -5,6 +5,7 @@ import { ProfileCard } from './ProfileCard';
 
 interface HighlightedProfilesProps {
   profiles: MatrimonialProfile[];
+  emptyMessage?: string;
   onViewProfile: (profile: MatrimonialProfile) => void;
   onToggleShortlist: (id: string) => void;
   onSendInterest: (id: string) => void;
@@ -12,6 +13,7 @@ interface HighlightedProfilesProps {
 
 export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
   profiles,
+  emptyMessage = 'No profiles are available in this category yet.',
   onViewProfile,
   onToggleShortlist,
   onSendInterest
@@ -28,7 +30,8 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
 
   const pageSize = 8;
   const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-  const currentProfiles = filtered.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  const visiblePage = Math.min(currentPage, totalPages - 1);
+  const currentProfiles = filtered.slice(visiblePage * pageSize, (visiblePage + 1) * pageSize);
 
   const handlePrev = () => {
     setCurrentPage((prev) => (prev > 0 ? prev - 1 : totalPages - 1));
@@ -112,26 +115,27 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
         <div className="relative px-2 sm:px-4 pt-3">
           
           {/* Left Arrow Button (<) */}
-          <button
+          {totalPages > 1 && <button
             type="button"
             onClick={handlePrev}
             className="w-11 h-11 rounded-full bg-white hover:bg-red-50 border border-zinc-200 shadow-md flex items-center justify-center text-zinc-700 hover:text-red-700 transition-all absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             title="Previous Profiles"
           >
             <ChevronLeft className="w-5 h-5" />
-          </button>
+          </button>}
 
           {/* Right Arrow Button (>) */}
-          <button
+          {totalPages > 1 && <button
             type="button"
             onClick={handleNext}
             className="w-11 h-11 rounded-full bg-white hover:bg-red-50 border border-zinc-200 shadow-md flex items-center justify-center text-zinc-700 hover:text-red-700 transition-all absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             title="Next Profiles"
           >
             <ChevronRight className="w-5 h-5" />
-          </button>
+          </button>}
 
           {/* 4-Columns Grid */}
+          {currentProfiles.length === 0 && <p role="status" className="py-12 text-sm text-zinc-600">{profiles.length === 0 ? emptyMessage : 'No profiles are available in this category yet.'}</p>}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {currentProfiles.map((profile) => (
               <ProfileCard
@@ -153,7 +157,7 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
                   type="button"
                   onClick={() => setCurrentPage(i)}
                   className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                    currentPage === i ? 'bg-[#C71F37] w-7' : 'bg-zinc-300 hover:bg-zinc-400 w-2.5'
+                    visiblePage === i ? 'bg-[#C71F37] w-7' : 'bg-zinc-300 hover:bg-zinc-400 w-2.5'
                   }`}
                 />
               ))}

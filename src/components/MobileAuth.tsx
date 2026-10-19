@@ -36,7 +36,7 @@ export default function MobileAuth({ registration = false, onClose }: { registra
       const result = await api<OtpResult>('auth/otp/request/', 'POST', { mobile, name: needsName ? name.trim() : '' });
       if (!mounted.current) return;
       if (result.nameRequired) { setNeedsName(true); setError('Welcome! Add your name to create your account.'); return; }
-      setChallenge(result); setCode(''); setResendAt(Date.now() + (result.resendAfter || 60) * 1000);
+      setChallenge(result); setCode(result.devOtp || ''); setResendAt(Date.now() + (result.resendAfter || 60) * 1000);
     } catch (err) { if (mounted.current) setError(err instanceof Error ? err.message : 'Unable to request a code.'); }
     finally { if (mounted.current) setBusy(false); }
   };

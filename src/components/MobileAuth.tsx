@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, X } from 'lucide-react';
 import { api } from '../api';
 
 interface OtpResult { nameRequired?: boolean; challengeId?: string; mobile?: string; expiresIn?: number; resendAfter?: number; devOtp?: string; otpLength?: number; detail: string }
 export default function MobileAuth({ registration = false, onClose }: { registration?: boolean; onClose: () => void }) {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [needsName, setNeedsName] = useState(registration);
@@ -48,7 +49,8 @@ export default function MobileAuth({ registration = false, onClose }: { registra
       const result = await api<{ token: string; isNewUser: boolean }>('auth/otp/verify/', 'POST', { challengeId: challenge.challengeId, mobile: challenge.mobile, code });
       sessionStorage.setItem('you2me-token', result.token);
       sessionStorage.setItem('you2me-auth-dismissed', 'true');
-      window.location.assign(result.isNewUser ? '/profile' : '/');
+      if (result.isNewUser) navigate('/profile', { replace: true });
+      else window.location.assign('/');
     } catch (err) { if (mounted.current) setError(err instanceof Error ? err.message : 'Unable to verify the code.'); }
     finally { if (mounted.current) setBusy(false); }
   };
@@ -72,11 +74,11 @@ export default function MobileAuth({ registration = false, onClose }: { registra
           {needsName && <label className="block text-sm font-semibold text-zinc-700">Your name<input required maxLength={120} autoComplete="name" value={name} onChange={e => setName(e.target.value)} disabled={busy} className="mt-1.5 w-full rounded-xl border border-zinc-200 p-3 focus:outline-none focus:ring-2 focus:ring-red-500" /></label>}
           <label className="block text-sm font-semibold text-zinc-700">Mobile number<input type="tel" required autoComplete="tel" placeholder="10-digit Indian number or +country code" value={mobile} onChange={e => setMobile(e.target.value)} disabled={busy} maxLength={30} className="mt-1.5 w-full rounded-xl border border-zinc-200 p-3 focus:outline-none focus:ring-2 focus:ring-red-500" /></label>
         </> : <>
-          {challenge.devOtp && <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">Local test mode: <strong>{challenge.devOtp}</strong>. No SMS was sent.</p>}
+          {challenge.devOtp && <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">Use <strong>{challenge.devOtp}</strong> to continue. SMS verification is temporarily disabled.</p>}
           <label className="block text-sm font-semibold text-zinc-700">Verification code<input required inputMode="numeric" autoComplete="one-time-code" pattern={`[0-9]{${challenge.otpLength || 4}}`} maxLength={challenge.otpLength || 4} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))} disabled={busy} className="mt-1.5 w-full rounded-xl border border-zinc-200 p-3 text-center text-xl tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-red-500" /></label>
         </>}
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-        <button type="submit" disabled={busy} className="w-full rounded-xl bg-red-700 py-3 font-semibold text-white hover:bg-red-800 disabled:opacity-50">{busy ? 'Please wait...' : challenge ? 'Verify & continue' : 'Get OTP'}</button>
+        <button type="submit" disabled={busy} className="w-full rounded-xl bg-red-700 py-3 font-semibold text-white hover:bg-red-800 disabled:opacity-50">{busy ? 'Please wait...' : challenge ? 'Verify & continue' : 'Continue'}</button>
         {challenge && <div className="flex justify-between gap-3 text-xs">
           <button type="button" disabled={busy} onClick={() => { setChallenge(null); setCode(''); setError(''); }} className="text-zinc-600 underline">Change mobile number</button>
           <button type="button" disabled={busy || seconds > 0} onClick={() => void requestCode()} className="text-red-700 underline disabled:text-zinc-400">{seconds > 0 ? `Resend in ${seconds}s` : 'Resend OTP'}</button>

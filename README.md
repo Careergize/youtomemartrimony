@@ -1,5 +1,9 @@
 # React + TypeScript + Vite
 
+## Vercel deployment
+
+Set the Vercel project Root Directory to `UI`, build command to `npm run build`, and output directory to `dist`. The included `vercel.json` serves the React app for browser routes such as `/profile`, `/register`, and `/login/email`, including direct visits and refreshes. Redeploy after changing this configuration.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

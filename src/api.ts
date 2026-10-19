@@ -22,6 +22,7 @@ export async function authenticate(path: 'login' | 'register', data: unknown) {
   sessionStorage.setItem(TOKEN_KEY, result.token);
 }
 export async function loadProfiles() {
+  if (!hasSession()) return api<MatrimonialProfile[]>('profiles/preview/');
   const [discovery, connections] = await Promise.all([loadProfilePages('profiles/'), loadProfilePages('profiles/?connections=true')]);
   return [...new Map([...discovery, ...connections].map(profile => [profile.id, profile])).values()];
 }

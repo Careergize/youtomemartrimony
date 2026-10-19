@@ -26,19 +26,16 @@ import { Footer } from './components/Footer';
 import Login from './Login';
 import { api, hasSession, loadProfiles, connectionFor } from './api';
 import MobileAuthPage from './MobileAuthPage';
-import MobileAuth from './components/MobileAuth';
 import { CallProvider } from './components/Calls';
 
 function Home() {
-  const [showWelcome, setShowWelcome] = useState(() => !hasSession() && !sessionStorage.getItem('you2me-auth-dismissed'));
   const navigate = useNavigate();
   const [apiError, setApiError] = useState('');
   const [loadingProfiles, setLoadingProfiles] = useState(true);
   const refreshProfiles = async () => setProfiles(await loadProfiles());
   useEffect(() => {
-    if (!hasSession()) { setLoadingProfiles(false); return; }
     let active = true;
-    Promise.all([api<MatrimonialProfile>('me/'), loadProfiles()])
+    Promise.all([hasSession() ? api<MatrimonialProfile>('me/') : Promise.resolve(null), loadProfiles()])
       .then(([me, list]) => { if (active) { setCurrentUser(me); setProfiles(list); } })
       .catch(err => { if (active) setApiError(err.message); })
       .finally(() => { if (active) setLoadingProfiles(false); });
@@ -309,8 +306,8 @@ function Home() {
             {/* Handpicked Alliances / Highlighted Profiles */}
             <HighlightedProfiles
               profiles={profiles}
-              emptyMessage={loadingProfiles ? 'Loading profiles...' : apiError ? 'Profiles could not be loaded. Use Retry above.' : !hasSession() ? 'Log in to browse member profiles.' : 'No other complete member profiles are available yet.'}
-              onViewProfile={(p) => setSelectedProfile(p)}
+              emptyMessage={loadingProfiles ? 'Loading profiles...' : apiError ? 'Profiles could not be loaded. Use Retry above.' : 'No other complete member profiles are available yet.'}
+              onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
               onToggleShortlist={handleToggleShortlist}
               onSendInterest={handleSendInterest}
             />
@@ -445,10 +442,10 @@ function Home() {
                         <Search className="w-8 h-8" />
                       </div>
                       <h3 className="font-serif text-2xl font-bold text-zinc-800">
-                        {loadingProfiles ? 'Loading Profiles' : apiError ? 'Unable to Load Profiles' : !hasSession() ? 'Log In to View Profiles' : profiles.length === 0 ? 'No Member Profiles Available Yet' : 'No Matching Profiles Found'}
+                        {loadingProfiles ? 'Loading Profiles' : apiError ? 'Unable to Load Profiles' : profiles.length === 0 ? 'No Member Profiles Available Yet' : 'No Matching Profiles Found'}
                       </h3>
                       <p className="text-xs sm:text-sm text-zinc-500 max-w-md mx-auto">
-                        {loadingProfiles ? 'Please wait while we load member profiles.' : apiError ? 'Use Retry above to load profiles again.' : !hasSession() ? 'Sign in to browse members and find your match.' : profiles.length === 0 ? 'Discovery shows other active members who have added their age and profile type. Your own profile is available under My Profile.' : "We couldn't find profiles matching your criteria. Try clearing your filters or restoring passed profiles."}
+                        {loadingProfiles ? 'Please wait while we load member profiles.' : apiError ? 'Use Retry above to load profiles again.' : profiles.length === 0 ? 'Discovery shows other active members who have added their age and profile type. Your own profile is available under My Profile.' : "We couldn't find profiles matching your criteria. Try clearing your filters or restoring passed profiles."}
                       </p>
                       {!loadingProfiles && !apiError && !hasSession() && <button type="button" onClick={() => navigate('/login')} className="rounded-xl bg-[#C71F37] px-6 py-2.5 text-sm font-bold text-white">Log in</button>}
                       {profiles.length > 0 && <div className="flex items-center justify-center gap-3">
@@ -478,7 +475,7 @@ function Home() {
                         <ProfileCard
                           key={profile.id}
                           profile={profile}
-                          onViewProfile={(p) => setSelectedProfile(p)}
+                          onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
                           onToggleShortlist={handleToggleShortlist}
                           onSendInterest={handleSendInterest}
                           onPassProfile={handlePassProfile}
@@ -506,7 +503,7 @@ function Home() {
             onDeclineInterest={handleDeclineInterest}
             onSendInterest={handleSendInterest}
             onToggleShortlist={handleToggleShortlist}
-            onViewProfile={(p) => setSelectedProfile(p)}
+            onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
             onOpenChat={(p) => setChatProfile(p)}
             onBackToDiscovery={() => setActiveNavTab('discovery')}
           />
@@ -521,7 +518,7 @@ function Home() {
             onDeclineInterest={handleDeclineInterest}
             onSendInterest={handleSendInterest}
             onToggleShortlist={handleToggleShortlist}
-            onViewProfile={(p) => setSelectedProfile(p)}
+            onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
             onOpenChat={(p) => setChatProfile(p)}
             onBackToDiscovery={() => setActiveNavTab('discovery')}
           />
@@ -536,7 +533,7 @@ function Home() {
             onDeclineInterest={handleDeclineInterest}
             onSendInterest={handleSendInterest}
             onToggleShortlist={handleToggleShortlist}
-            onViewProfile={(p) => setSelectedProfile(p)}
+            onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
             onOpenChat={(p) => setChatProfile(p)}
             onBackToDiscovery={() => setActiveNavTab('discovery')}
           />
@@ -544,7 +541,6 @@ function Home() {
       </main>
 
       {/* Global Modals */}
-      {showWelcome && <MobileAuth registration onClose={() => { sessionStorage.setItem('you2me-auth-dismissed', 'true'); setShowWelcome(false); }} />}
 
       {/* 1. Detailed Profile View Modal */}
       {currentUser && <ProfileModal

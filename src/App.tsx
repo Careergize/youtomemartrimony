@@ -79,6 +79,7 @@ function Home() {
   // Modals state
   const [selectedProfile, setSelectedProfile] = useState<MatrimonialProfile | null>(null);
   const [chatProfile, setChatProfile] = useState<MatrimonialProfile | null>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
   // Discovery Filter State
@@ -272,6 +273,7 @@ function Home() {
         setActiveTab={setActiveNavTab}
         shortlistedCount={shortlistedCount}
         interestsCount={interestsCount}
+        unreadMessages={currentUser ? unreadMessages : 0}
         onOpenUpgrade={() => setIsUpgradeOpen(true)}
         onOpenProfile={() => { if (requireSession()) navigate('/profile'); }}
         onScrollToSearch={handleScrollToSearch}
@@ -529,6 +531,7 @@ function Home() {
 
         {/* VIEW 4: MESSAGES / MUTUAL CONNECTIONS */}
         {currentUser && <Messenger profiles={profiles} visible={activeNavTab === 'messages'} activeProfileId={chatProfile?.id}
+          onUnreadChange={setUnreadMessages}
           onOpen={p => setChatProfile(p)} onShowInbox={() => { setActiveNavTab('messages'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />}
 
       </main>

@@ -11,6 +11,7 @@ interface NavbarProps {
   setActiveTab: (tab: 'discovery' | 'interests' | 'shortlist' | 'messages') => void;
   shortlistedCount: number;
   interestsCount: number;
+  unreadMessages: number;
   onOpenUpgrade: () => void;
   onOpenProfile: () => void;
   onScrollToSearch: () => void;
@@ -25,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   shortlistedCount,
   interestsCount,
+  unreadMessages,
   onOpenUpgrade,
   onOpenProfile,
   onScrollToSearch
@@ -128,7 +130,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
-          <button type="button" aria-label="Messages" title="Messages" onClick={() => setActiveTab('messages')} className={`flex h-11 w-11 items-center justify-center rounded-full ${activeTab === 'messages' ? 'bg-red-100 text-red-800' : 'bg-zinc-100 text-zinc-700 hover:bg-red-50'}`}><MessageCircle size={22} aria-hidden="true" /></button>
+          <button type="button" aria-label={`Messages, ${unreadMessages} unread`} title="Messages" onClick={() => setActiveTab('messages')} className={`relative flex h-11 w-11 items-center justify-center rounded-full ${activeTab === 'messages' ? 'bg-red-100 text-red-800' : 'bg-zinc-100 text-zinc-700 hover:bg-red-50'}`}>
+            <MessageCircle size={22} aria-hidden="true" />
+            {unreadMessages > 0 && <span aria-live="polite" className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-bold text-white ring-2 ring-white">{unreadMessages > 99 ? '99+' : unreadMessages}</span>}
+          </button>
           {/* Right Action Elements */}
           <div className="flex items-center gap-2 sm:gap-3">
             {isLoggedIn ? (

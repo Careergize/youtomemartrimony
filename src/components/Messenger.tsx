@@ -4,9 +4,10 @@ import { api } from '../api';
 import type { MatrimonialProfile } from '../data/mockProfiles';
 
 type Conversation = { id: number; profile: MatrimonialProfile; unread: number; lastMessage: { id: number; text: string; time: string; sender: 'me' | 'them' } };
-export function Messenger({ profiles, visible, activeProfileId, onOpen, onShowInbox }: {
+export function Messenger({ profiles, visible, activeProfileId, onOpen, onShowInbox, onUnreadChange }: {
   profiles: MatrimonialProfile[]; visible: boolean; activeProfileId?: string;
   onOpen: (profile: MatrimonialProfile) => void; onShowInbox: () => void;
+  onUnreadChange: (count: number) => void;
 }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [query, setQuery] = useState('');
@@ -39,6 +40,7 @@ export function Messenger({ profiles, visible, activeProfileId, onOpen, onShowIn
     return () => { live = false; window.clearInterval(timer); window.removeEventListener('focus', refresh); };
   }, [activeProfileId]);
   const unread = conversations.reduce((total, row) => total + row.unread, 0);
+  useEffect(() => { onUnreadChange(unread); }, [unread, onUnreadChange]);
   useEffect(() => {
     const title = document.title;
     if (unread) document.title = `(${unread}) New messages · YOU2ME`;
@@ -49,7 +51,7 @@ export function Messenger({ profiles, visible, activeProfileId, onOpen, onShowIn
   return <>
     <button type="button" onClick={onShowInbox} title="Messages" aria-label={`Messages, ${unread} unread`} className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#C71F37] text-white shadow-xl hover:bg-red-800">
       <MessageCircle size={25} aria-hidden="true" />
-      {unread > 0 && <span className="absolute -right-1 -top-1 rounded-full bg-white px-2 text-sm font-bold text-red-700 shadow-sm">{unread}</span>}
+      {unread > 0 && <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white ring-2 ring-white">{unread > 99 ? '99+' : unread}</span>}
     </button>
     {notice && <div role="status" aria-live="polite" className="fixed right-4 top-32 z-[55] flex w-[min(360px,calc(100vw-32px))] items-start gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
       <button type="button" onClick={() => open(notice.profile)} className="flex min-w-0 flex-1 gap-3 text-left">

@@ -46,7 +46,6 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
   const isShortlisted = !!profile.isShortlisted;
   const isInterestSent = profile.interestStatus === 'sent' || profile.interestStatus === 'accepted';
-  const isMutualMatch = profile.interestStatus === 'accepted';
 
   // Compare partner preferences with current user
   const preferencesComparison = [
@@ -551,7 +550,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             </button>
 
             {/* Direct Message if mutual or interest accepted */}
-            {isMutualMatch && (
+            {profile.interestStatus !== 'declined' && (
               <button
                 type="button"
                 onClick={() => {

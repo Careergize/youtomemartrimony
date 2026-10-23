@@ -15,6 +15,7 @@ interface ProfileCardProps {
   onViewProfile: (profile: MatrimonialProfile) => void;
   onToggleShortlist: (id: string) => void;
   onSendInterest: (id: string) => void;
+  onMessage?: (profile: MatrimonialProfile) => void;
   onPassProfile?: (id: string) => void;
 }
 
@@ -22,7 +23,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   profile,
   onViewProfile,
   onToggleShortlist,
-  onSendInterest
+  onSendInterest,
+  onMessage
 }) => {
   const isShortlisted = !!profile.isShortlisted;
   const isInterestSent = profile.interestStatus === 'sent' || profile.interestStatus === 'accepted';
@@ -145,6 +147,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             Biodata
           </button>
 
+          {onMessage && <button type="button" onClick={() => onMessage(profile)} className="flex-1 rounded-xl bg-[#C71F37] px-3 py-2 text-xs font-bold text-white hover:bg-red-800">Message</button>}
           {/* Primary: Send Interest */}
           <button
             type="button"

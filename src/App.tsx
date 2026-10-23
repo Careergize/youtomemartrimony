@@ -19,6 +19,7 @@ import { ProfileCard } from './components/ProfileCard';
 import { ProfileModal } from './components/ProfileModal';
 import { InterestsHub } from './components/InterestsHub';
 import ProfilePage from './ProfilePage';
+import { Messenger } from './components/Messenger';
 import { ChatModal } from './components/ChatModal';
 import { PremiumModal } from './components/PremiumModal';
 import { SuccessStories } from './components/SuccessStories';
@@ -164,7 +165,7 @@ function Home() {
       const connection = await connectionFor(id);
       await api(`interests/${connection.id}/`, 'PATCH', { status });
       await refreshProfiles();
-      showToast(status === 'accepted' ? 'Connection accepted. Messaging unlocked.' : 'Interest declined.');
+      showToast(status === 'accepted' ? 'Connection accepted. You can now also make calls.' : 'Interest declined.');
     } catch (err) { showToast(err instanceof Error ? err.message : 'Unable to respond.'); }
   };
   const handleAcceptInterest = (id: string) => { void respondInterest(id, 'accepted'); };
@@ -310,6 +311,7 @@ function Home() {
               onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
               onToggleShortlist={handleToggleShortlist}
               onSendInterest={handleSendInterest}
+              onMessage={(p) => { if (requireSession()) setChatProfile(p); }}
             />
 
             {/* The 4 Pillars of YOU2ME Matrimony */}
@@ -478,6 +480,7 @@ function Home() {
                           onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
                           onToggleShortlist={handleToggleShortlist}
                           onSendInterest={handleSendInterest}
+              onMessage={(p) => { if (requireSession()) setChatProfile(p); }}
                           onPassProfile={handlePassProfile}
                         />
                       ))}
@@ -525,19 +528,9 @@ function Home() {
         )}
 
         {/* VIEW 4: MESSAGES / MUTUAL CONNECTIONS */}
-        {activeNavTab === 'messages' && (
-          <InterestsHub
-            profiles={profiles}
-            defaultSubTab="mutual"
-            onAcceptInterest={handleAcceptInterest}
-            onDeclineInterest={handleDeclineInterest}
-            onSendInterest={handleSendInterest}
-            onToggleShortlist={handleToggleShortlist}
-            onViewProfile={(p) => { if (requireSession()) setSelectedProfile(p); }}
-            onOpenChat={(p) => setChatProfile(p)}
-            onBackToDiscovery={() => setActiveNavTab('discovery')}
-          />
-        )}
+        {currentUser && <Messenger profiles={profiles} visible={activeNavTab === 'messages'} activeProfileId={chatProfile?.id}
+          onOpen={p => setChatProfile(p)} onShowInbox={() => { setActiveNavTab('messages'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />}
+
       </main>
 
       {/* Global Modals */}

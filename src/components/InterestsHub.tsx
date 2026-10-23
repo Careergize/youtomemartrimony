@@ -356,7 +356,7 @@ export const InterestsHub: React.FC<InterestsHubProps> = ({
               <MessageCircle className="w-12 h-12 text-zinc-300 mx-auto" />
               <h3 className="font-serif text-lg font-bold text-zinc-700">No Mutual Matches Yet</h3>
               <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-                When you and another member both accept each other's interest, direct chat and family phone contact unlock here!
+                You can message any member directly. Open Messages to start a conversation, or accept an interest to connect and make calls.
               </p>
             </div>
           ) : (

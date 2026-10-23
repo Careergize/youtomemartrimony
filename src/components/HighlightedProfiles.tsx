@@ -9,6 +9,7 @@ interface HighlightedProfilesProps {
   onViewProfile: (profile: MatrimonialProfile) => void;
   onToggleShortlist: (id: string) => void;
   onSendInterest: (id: string) => void;
+  onMessage?: (profile: MatrimonialProfile) => void;
 }
 
 export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
@@ -16,7 +17,8 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
   emptyMessage = 'No profiles are available in this category yet.',
   onViewProfile,
   onToggleShortlist,
-  onSendInterest
+  onSendInterest,
+  onMessage
 }) => {
   const [categoryFilter, setCategoryFilter] = useState<'All' | 'Bride' | 'Groom' | 'TopMatch'>('All');
   const [currentPage, setCurrentPage] = useState(0);
@@ -143,7 +145,7 @@ export const HighlightedProfiles: React.FC<HighlightedProfilesProps> = ({
                 profile={profile}
                 onViewProfile={onViewProfile}
                 onToggleShortlist={onToggleShortlist}
-                onSendInterest={onSendInterest}
+                onSendInterest={onSendInterest} onMessage={onMessage}
               />
             ))}
           </div>

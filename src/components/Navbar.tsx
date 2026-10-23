@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, UserRound, LogOut } from 'lucide-react';
+import { Heart, UserRound, LogOut, MessageCircle } from 'lucide-react';
 
 interface NavbarProps {
   isLoggedIn: boolean;
@@ -128,6 +128,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
+          <button type="button" aria-label="Messages" title="Messages" onClick={() => setActiveTab('messages')} className={`flex h-11 w-11 items-center justify-center rounded-full ${activeTab === 'messages' ? 'bg-red-100 text-red-800' : 'bg-zinc-100 text-zinc-700 hover:bg-red-50'}`}><MessageCircle size={22} aria-hidden="true" /></button>
           {/* Right Action Elements */}
           <div className="flex items-center gap-2 sm:gap-3">
             {isLoggedIn ? (

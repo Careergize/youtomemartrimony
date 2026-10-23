@@ -1,7 +1,10 @@
 import type { MatrimonialProfile } from './data/mockProfiles';
 
 const TOKEN_KEY = 'you2me-token';
-export const apiUrl = (path: string) => `https://api.you2mematrimonial.com/api/${path.replace(/^\/+/, '')}`;
+const API_BASE_URL = import.meta.env.DEV
+  ? '/api/'
+  : 'https://api.you2mematrimonial.com/api/';
+export const apiUrl = (path: string) => `${API_BASE_URL}${path.replace(/^\/+/, '')}`;
 export const hasSession = () => Boolean(sessionStorage.getItem(TOKEN_KEY));
 export async function api<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
   const token = sessionStorage.getItem(TOKEN_KEY);
